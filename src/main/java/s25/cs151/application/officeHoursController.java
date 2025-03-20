@@ -129,12 +129,16 @@ public class officeHoursController {
         //Create the TableView
         TableView<ObservableList<String>> table = createTableView(data);
 
-        Group group = new Group();
-
         Stage stage2 = new Stage();
-        Scene scene2 = new Scene(group, 700, 400);
 
-        ((Group) scene2.getRoot()).getChildren().add(table);
+        VBox container = new VBox(); // Use a resizable layout
+        container.getChildren().add(table); // Add the TableView to the layout
+        container.setPrefSize(700, 400); // Set the preferred size of the container
+
+        table.prefWidthProperty().bind(container.widthProperty());
+        table.prefHeightProperty().bind(container.heightProperty());
+
+        Scene scene2 = new Scene(container); // Use the VBox as the root
 
         stage2.setTitle("Faculty office hours");
         stage2.setScene(scene2);
@@ -184,8 +188,6 @@ public class officeHoursController {
                 // Dynamically size the "Selected Day(s)" column
                 if (i == columnCount - 1) { // Last column ("Selected Day(s)")
                     column.setMinWidth(150); // Set a minimum width
-                    column.setPrefWidth(300); // Set a preferred width
-                    column.setMaxWidth(Double.MAX_VALUE); // Allow it to expand fully
                 }
 
                 table.getColumns().add(column);
