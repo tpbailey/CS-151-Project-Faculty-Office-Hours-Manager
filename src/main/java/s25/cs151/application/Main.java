@@ -1,14 +1,10 @@
 package s25.cs151.application;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 
-import javafx.scene.control.TableView;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

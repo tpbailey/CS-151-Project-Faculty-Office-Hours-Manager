@@ -148,13 +148,10 @@ public class officeHoursController {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
 
-            out.println(year + "," + semester + "," + days); // Write data as a new line
+            out.println(year + "," + semester + ",\"" + days + "\"");
         } catch (IOException e) {
             e.printStackTrace(); // Handle potential exceptions
         }
-//        PrintWriter out = new PrintWriter(csvFile);
-//        out.println(year + "," + semester + "," + days);
-//        out.close();
     }
 
     public ObservableList<ObservableList<String>> readCSVFile() {
@@ -163,8 +160,10 @@ public class officeHoursController {
             String line;
             while ((line = br.readLine()) != null) {
                 ObservableList<String> row = FXCollections.observableArrayList();
-                String[] values = line.split(","); // Split the line into individual values
-                row.addAll(values); // Add all values of the row
+                String[] values = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                for (String value : values) {
+                    row.add(value.replaceAll("^\"|\"$", "")); // Remove quotes if present
+                }
                 data.add(row);
             }
         } catch (IOException e) {
@@ -175,16 +174,26 @@ public class officeHoursController {
 
     public static TableView<ObservableList<String>> createTableView(ObservableList<ObservableList<String>> data) {
         TableView<ObservableList<String>> table = new TableView<>();
-        String[] columnTitles = {"Year", "Semester", "Selected Days"};
+        String[] columnTitles = {"Year", "Semester", "Selected Day(s)"};
         if (!data.isEmpty()) {
-            int columnCount = data.get(0).size(); // Assume all rows have the same number of columns
+            int columnCount = data.get(0).size();
             for (int i = 0; i < columnCount; i++) {
                 final int colIndex = i;
                 TableColumn<ObservableList<String>, String> column = new TableColumn<>(columnTitles[i]);
                 column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(colIndex)));
+                // Dynamically size the "Selected Day(s)" column
+                if (i == columnCount - 1) { // Last column ("Selected Day(s)")
+                    column.setMinWidth(150); // Set a minimum width
+                    column.setPrefWidth(300); // Set a preferred width
+                    column.setMaxWidth(Double.MAX_VALUE); // Allow it to expand fully
+                }
+
                 table.getColumns().add(column);
             }
         }
+
+        // Set the column resize policy to make columns adjust dynamically
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         table.setItems(data);
         return table;
