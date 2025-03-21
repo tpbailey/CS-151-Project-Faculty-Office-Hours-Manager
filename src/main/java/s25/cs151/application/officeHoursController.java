@@ -57,7 +57,8 @@ public class officeHoursController {
 
     @FXML
     public void initialize() {
-        semesterDropdown.getItems().addAll("Winter", "Spring", "Summer", "Fall");
+        semesterDropdown.getItems().addAll( "Spring", "Summer", "Fall", "Winter");
+        semesterDropdown.setValue("Spring");
 
         yearInput.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
@@ -68,7 +69,9 @@ public class officeHoursController {
 
     @FXML
     protected void onSubmitButtonClick() {
-        if (semesterDropdown.getValue() == null || yearInput.getText().isEmpty()) {
+        if (semesterDropdown.getValue() == null || yearInput.getText().isEmpty() || !yearInput.getText().matches("\\d{4}") || !yearInput.getText().matches("\\d{4}") || !mondayCheckbox.isSelected() && !tuesdayCheckbox.isSelected() &&
+                !wednesdayCheckbox.isSelected() && !thursdayCheckbox.isSelected() &&
+                !fridayCheckbox.isSelected()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Input Error");
             alert.setHeaderText("Missing Required Fields");
@@ -168,14 +171,41 @@ public class officeHoursController {
                 for (String value : values) {
                     row.add(value.replaceAll("^\"|\"$", "")); // Remove quotes if present
                 }
-                data.add(row);
+               // data.add(row);
+                if (row.size() == 3) {
+                    data.add(row);
+                } else {
+                    System.err.println("Skipping malformed row: " + row);
+                }
             }
+            FXCollections.sort(data, (row1, row2) -> {
+                int year1 = Integer.parseInt(row1.getFirst());
+                int year2 = Integer.parseInt(row2.getFirst());
+
+                if (year1 != year2) {
+                    return Integer.compare(year2, year1); // descending by year
+                }
+
+                int sem1 = TrackSemester(row1.get(1));
+                int sem2 = TrackSemester(row2.get(1));
+                return Integer.compare(sem2, sem1); // descending by semester
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return data;
     }
-
+    @FXML
+    private int TrackSemester(String semester) {
+        return switch (semester.trim()) {
+            case "Spring" -> 4;
+            case "Summer" -> 3;
+            case "Fall"   -> 2;
+            case "Winter" -> 1;
+            default       -> 0;
+        };
+    }
     public static TableView<ObservableList<String>> createTableView(ObservableList<ObservableList<String>> data) {
         TableView<ObservableList<String>> table = new TableView<>();
         String[] columnTitles = {"Year", "Semester", "Selected Day(s)"};
