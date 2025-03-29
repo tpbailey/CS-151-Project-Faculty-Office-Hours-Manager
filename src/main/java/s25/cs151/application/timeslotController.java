@@ -143,7 +143,7 @@ public class timeslotController extends Application {
              PrintWriter pw = new PrintWriter(bw)) {
 
             // Write header
-            pw.println("From,To");
+            //pw.println("From,To");
             // Write each time slot
             for (TimeSlot ts : timeSlotList) {
                 pw.println(ts.getFrom() + "," + ts.getTo());
