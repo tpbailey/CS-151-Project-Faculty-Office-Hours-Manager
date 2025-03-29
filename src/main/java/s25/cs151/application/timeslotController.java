@@ -46,7 +46,7 @@ public class timeslotController extends Application {
         HBox timeInputBox = new HBox(10, new Label("From:"), startTime, new Label("To:"), endTime, addButton);
         timeInputBox.setAlignment(Pos.CENTER);
 
-        //  creating the table view!
+        // creating the table view
         tableView = new TableView<>();
         timeSlotList = FXCollections.observableArrayList();
         tableView.setItems(timeSlotList);
@@ -58,7 +58,7 @@ public class timeslotController extends Application {
         toCol.setCellValueFactory(new PropertyValueFactory<>("to"));
         tableView.getColumns().addAll(fromCol, toCol);
 
-        // this is to upload everything into the timeslots.csv
+        // button to upload everything into timeslots.csv
         Button saveButton = new Button("Save Time Slots");
         saveButton.setOnAction(e -> saveTimeSlots());
 
@@ -74,12 +74,11 @@ public class timeslotController extends Application {
         Scene scene = new Scene(root, 700, 500);
         stage.setTitle("Time Slots");
         stage.setScene(scene);
-        //stage.setScene(new Scene(vb, 700, 500));
         stage.show();
     }
 
     /**
-     * creating times from 00:00 to 23:59
+     * Creates time strings from 00:00 to 23:59 in 15-minute increments.
      */
     private ObservableList<String> generateTimes() {
         List<String> times = new ArrayList<>();
@@ -92,7 +91,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * adding new time slots to table validation
+     * Adds a new time slot to the table after validation and sorts the list by "From Hour" (ascending).
      */
     private void addTimeSlot() {
         String from = startTime.getValue();
@@ -110,18 +109,25 @@ public class timeslotController extends Application {
 
         TimeSlot slot = new TimeSlot(from, to);
         timeSlotList.add(slot);
+
+        // Sort the list by "From Hour" in ascending order
+        timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+
         // Optionally clear selections after adding
         startTime.getSelectionModel().clearSelection();
         endTime.getSelectionModel().clearSelection();
     }
 
     /**
-     * is the start time before the end time?
+     * Checks if the start time is before the end time.
      */
     private boolean isValidTimeSlot(String from, String to) {
         return convertToMinutes(from) < convertToMinutes(to);
     }
 
+    /**
+     * Converts a time string (e.g., "3:30") to minutes since midnight.
+     */
     private int convertToMinutes(String time) {
         String[] parts = time.split(":");
         int hour = Integer.parseInt(parts[0]);
@@ -130,7 +136,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * saving list of times into the timeslots.csv
+     * Saves the list of time slots to the timeslots.csv file.
      */
     private void saveTimeSlots() {
         if (timeSlotList.isEmpty()) {
@@ -142,9 +148,7 @@ public class timeslotController extends Application {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter pw = new PrintWriter(bw)) {
 
-            // Write header
-            //pw.println("From,To");
-            // Write each time slot
+            // Write each time slot to the file
             for (TimeSlot ts : timeSlotList) {
                 pw.println(ts.getFrom() + "," + ts.getTo());
             }
@@ -155,7 +159,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * error warning
+     * Displays an alert dialog.
      */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert alert = new Alert(type);
