@@ -2,8 +2,13 @@ package s25.cs151.application;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+
 
 
 import java.io.FileNotFoundException;
@@ -12,13 +17,9 @@ import java.io.IOException;
 public class Main extends Application {
 
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(s25.cs151.application.Main.class.getResource("home-page.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 700, 400);
-        stage.setTitle("Office Hours Scheduler");
-        stage.setScene(scene);
-        stage.show();
-
+    public void start(Stage primarystage) throws IOException {
+        facultyHomeController hp = new facultyHomeController();
+        hp.display(primarystage);
     }
 
     public static void main(String[] args) throws FileNotFoundException {
