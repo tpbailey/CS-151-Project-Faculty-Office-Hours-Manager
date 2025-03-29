@@ -66,13 +66,17 @@ public class timeslotController extends Application {
         HBox buttonBox = new HBox(saveButton);
         buttonBox.setAlignment(Pos.CENTER);
 
+        // Root container with consistent styling
         VBox root = new VBox(20, header, timeInputBox, tableView, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
+        // Consistent styling (background color and alignment)
+        root.setStyle("-fx-alignment: center;-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
 
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 700, 500);
         stage.setTitle("Time Slots");
         stage.setScene(scene);
+        //stage.setScene(new Scene(vb, 700, 500));
         stage.show();
     }
 

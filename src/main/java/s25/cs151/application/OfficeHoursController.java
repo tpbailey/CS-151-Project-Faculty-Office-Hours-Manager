@@ -107,6 +107,7 @@ public class OfficeHoursController extends Application {
         container.setPadding(new Insets(15));
         Scene tableScene = new Scene(container, 700, 400);
 
+
         Stage tableStage = new Stage();
         tableStage.setTitle("Office Hours Table");
         tableStage.setScene(tableScene);
