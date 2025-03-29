@@ -30,7 +30,7 @@ public class timeslotController extends Application {
         Label header = new Label("Define Semester's Time Slots");
         header.setStyle("-fx-font-size: 25px; -fx-font-weight: bold;");
 
-        // Create time selectors
+        // creating time selectors
         startTime = new ComboBox<>();
         endTime = new ComboBox<>();
         ObservableList<String> times = generateTimes();
@@ -39,15 +39,14 @@ public class timeslotController extends Application {
         startTime.setPromptText("From Hour");
         endTime.setPromptText("To Hour");
 
-        // Button to add a new time slot
+        // button to add a new time slot
         Button addButton = new Button("Add Time Slot");
         addButton.setOnAction(e -> addTimeSlot());
 
-        // Layout for time selectors and add button
         HBox timeInputBox = new HBox(10, new Label("From:"), startTime, new Label("To:"), endTime, addButton);
         timeInputBox.setAlignment(Pos.CENTER);
 
-        // TableView to display added time slots
+        //  creating the table view!
         tableView = new TableView<>();
         timeSlotList = FXCollections.observableArrayList();
         tableView.setItems(timeSlotList);
@@ -59,18 +58,17 @@ public class timeslotController extends Application {
         toCol.setCellValueFactory(new PropertyValueFactory<>("to"));
         tableView.getColumns().addAll(fromCol, toCol);
 
-        // Button to save all time slots to CSV
+        // this is to upload everything into the timeslots.csv
         Button saveButton = new Button("Save Time Slots");
         saveButton.setOnAction(e -> saveTimeSlots());
 
         HBox buttonBox = new HBox(saveButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // Root container with consistent styling
+        // setting styling to be the same as other pages
         VBox root = new VBox(20, header, timeInputBox, tableView, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
-        // Consistent styling (background color and alignment)
         root.setStyle("-fx-alignment: center;-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
 
         Scene scene = new Scene(root, 700, 500);
@@ -81,7 +79,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Generates time strings in 15-minute increments from 00:00 to 23:45.
+     * creating times from 00:00 to 23:59
      */
     private ObservableList<String> generateTimes() {
         List<String> times = new ArrayList<>();
@@ -94,7 +92,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Validates and adds a new time slot to the table.
+     * adding new time slots to table validation
      */
     private void addTimeSlot() {
         String from = startTime.getValue();
@@ -118,15 +116,12 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Checks if the start time is before the end time.
+     * is the start time before the end time?
      */
     private boolean isValidTimeSlot(String from, String to) {
         return convertToMinutes(from) < convertToMinutes(to);
     }
 
-    /**
-     * Converts a time string (e.g., "3:30") to minutes since midnight.
-     */
     private int convertToMinutes(String time) {
         String[] parts = time.split(":");
         int hour = Integer.parseInt(parts[0]);
@@ -135,7 +130,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Saves the list of time slots to a CSV file.
+     * saving list of times into the timeslots.csv
      */
     private void saveTimeSlots() {
         if (timeSlotList.isEmpty()) {
@@ -160,7 +155,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Displays an alert dialog.
+     * error warning
      */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert alert = new Alert(type);
