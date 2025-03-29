@@ -43,14 +43,13 @@ public class facultyHomeController {
         });
         btn2.setOnAction(e -> {
             timeslotController timeslotApp = new timeslotController();
-
             try {
-                Stage newStage = new Stage();
-                timeslotApp.start(newStage);
+                timeslotApp.start(primaryStage);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
+
         btn3.setOnAction(e->{
             courseController courseApp = new courseController();
             try {
