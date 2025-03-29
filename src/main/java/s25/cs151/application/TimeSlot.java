@@ -1,5 +1,5 @@
 package s25.cs151.application;
-
+//testing
 public class TimeSlot {
     private String from;
     private String to;
