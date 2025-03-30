@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,8 @@ public class TimeSlotController extends Application {
         toCol.setCellValueFactory(new PropertyValueFactory<>("to"));
         tableView.getColumns().addAll(fromCol, toCol);
 
+        loadTimeSlotsFromFile();
+
         Button saveButton = new Button("Save Time Slots");
         saveButton.setOnAction(e -> saveTimeSlots());
 
@@ -60,7 +63,7 @@ public class TimeSlotController extends Application {
         VBox root = new VBox(20, header, timeInputBox, tableView, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
-        root.setStyle("-fx-alignment: center;-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
+        root.setStyle("-fx-alignment: center;-fx-background-color: radial-gradient(center 50% 50%, radius 60%, #fceabb, #f8b500);");
 
         Scene scene = new Scene(root, 700, 500);
         stage.setTitle("Time Slots");
@@ -68,6 +71,9 @@ public class TimeSlotController extends Application {
         stage.show();
     }
 
+    /**
+     * 15-minute increments for the times
+     */
     private ObservableList<String> generateTimes() {
         List<String> times = new ArrayList<>();
         for (int hour = 0; hour < 24; hour++) {
@@ -78,6 +84,9 @@ public class TimeSlotController extends Application {
         return FXCollections.observableArrayList(times);
     }
 
+    /**
+     * adding a new time slot to the table after validation and sorts the list by start time
+     */
     private void addTimeSlot() {
         String from = startTime.getValue();
         String to = endTime.getValue();
@@ -94,6 +103,10 @@ public class TimeSlotController extends Application {
 
         TimeSlot slot = new TimeSlot(from, to);
         timeSlotList.add(slot);
+        // Sort the list by "From" time (converted to minutes) in ascending order.
+        timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+
+        // Clear selections for convenience.
         startTime.getSelectionModel().clearSelection();
         endTime.getSelectionModel().clearSelection();
     }
@@ -109,20 +122,55 @@ public class TimeSlotController extends Application {
         return hour * 60 + minute;
     }
 
+    private void loadTimeSlotsFromFile() {
+        File file = new File("timeslots.csv");
+        if (!file.exists()) {
+            return;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            // Expect each line to be in the format "from,to".
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    String from = parts[0].trim();
+                    String to = parts[1].trim();
+                    TimeSlot ts = new TimeSlot(from, to);
+                    timeSlotList.add(ts);
+                }
+            }
+            // Sort the list by "From" time.
+            timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load time slots: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * saves the list of time slots to the "timeslots.csv" file.
+     */
     private void saveTimeSlots() {
         if (timeSlotList.isEmpty()) {
             showAlert(Alert.AlertType.INFORMATION, "Information", "No time slots to save.");
             return;
         }
-
-        try {
-            TimeSlotDAO.save(timeSlotList, "timeslots.csv");
+        File file = new File("timeslots.csv");
+        try (FileWriter fw = new FileWriter(file, false);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter pw = new PrintWriter(bw)) {
+            for (TimeSlot ts : timeSlotList) {
+                pw.println(ts.getFrom() + "," + ts.getTo());
+            }
             showAlert(Alert.AlertType.INFORMATION, "Success", "Time slots saved successfully.");
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to save time slots: " + ex.getMessage());
         }
     }
 
+    /**
+     * shows alert
+     */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle("Time Slots");
