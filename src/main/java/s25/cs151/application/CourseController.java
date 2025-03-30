@@ -53,15 +53,28 @@ public class CourseController extends Application {
     }
 
     private void handleSubmit() {
-        String code = courseCodeField.getText();
-        String name = courseNameField.getText();
-        String section = sectionNumberField.getText();
+        String code = courseCodeField.getText().trim();
+        String name = courseNameField.getText().trim();
+        String section = sectionNumberField.getText().trim();
 
         if (code.isEmpty() || name.isEmpty() || section.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "All fields are required.");
             return;
         }
 
+        // duplicate course entries
+        ObservableList<Course> existingCourses = courseDAO.getAll();
+        for (Course c : existingCourses) {
+            if (c.getCourseCode().equalsIgnoreCase(code) &&
+                    c.getCourseName().equalsIgnoreCase(name) &&
+                    c.getSectionNumber().equalsIgnoreCase(section)) {
+                showAlert(Alert.AlertType.ERROR, "This course entry already exists.");
+                return;
+            }
+
+        }
+
+        // no duplicates, run this code
         Course course = new Course(code, name, section);
         courseDAO.save(course);
         displayTable();
