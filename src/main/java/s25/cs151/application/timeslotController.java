@@ -12,10 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +43,7 @@ public class timeslotController extends Application {
         HBox timeInputBox = new HBox(10, new Label("From:"), startTime, new Label("To:"), endTime, addButton);
         timeInputBox.setAlignment(Pos.CENTER);
 
-        // creating the table view
+        // creating the table view and observable list
         tableView = new TableView<>();
         timeSlotList = FXCollections.observableArrayList();
         tableView.setItems(timeSlotList);
@@ -58,7 +55,10 @@ public class timeslotController extends Application {
         toCol.setCellValueFactory(new PropertyValueFactory<>("to"));
         tableView.getColumns().addAll(fromCol, toCol);
 
-        // button to upload everything into timeslots.csv
+        // load previously saved time slots from the CSV file
+        loadTimeSlotsFromFile();
+
+        // button to save all time slots into timeslots.csv
         Button saveButton = new Button("Save Time Slots");
         saveButton.setOnAction(e -> saveTimeSlots());
 
@@ -136,6 +136,34 @@ public class timeslotController extends Application {
     }
 
     /**
+     * Loads time slot records from the timeslots.csv file into the observable list.
+     */
+    private void loadTimeSlotsFromFile() {
+        File file = new File("timeslots.csv");
+        if (!file.exists()) {
+            return;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            // Each line should be in the format "from,to"
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    String from = parts[0].trim();
+                    String to = parts[1].trim();
+                    TimeSlot ts = new TimeSlot(from, to);
+                    timeSlotList.add(ts);
+                }
+            }
+            // Sort the list after loading
+            timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load time slots: " + ex.getMessage());
+        }
+    }
+
+    /**
      * Saves the list of time slots to the timeslots.csv file.
      */
     private void saveTimeSlots() {
@@ -148,7 +176,7 @@ public class timeslotController extends Application {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter pw = new PrintWriter(bw)) {
 
-            // Write each time slot to the file
+            // Write each time slot to the file in "from,to" format
             for (TimeSlot ts : timeSlotList) {
                 pw.println(ts.getFrom() + "," + ts.getTo());
             }

@@ -86,6 +86,9 @@ public class CourseController extends Application {
 
         TableColumn<Course, String> codeCol = new TableColumn<>("Course Code");
         codeCol.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+        // Force descending order and disable further sorting
+        codeCol.setSortType(TableColumn.SortType.DESCENDING);
+        codeCol.setSortable(false);
 
         TableColumn<Course, String> nameCol = new TableColumn<>("Course Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
@@ -97,6 +100,9 @@ public class CourseController extends Application {
         table.setItems(courses);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        // Optionally, add the column to the sort order so it appears sorted by default
+        table.getSortOrder().add(codeCol);
+
         VBox layout = new VBox(10, new Label("All Courses"), table);
         layout.setPadding(new Insets(15));
 
@@ -105,6 +111,7 @@ public class CourseController extends Application {
         tableStage.setScene(new Scene(layout, 700, 400));
         tableStage.show();
     }
+
 
     private void showAlert(Alert.AlertType type, String message) {
         Alert alert = new Alert(type);
