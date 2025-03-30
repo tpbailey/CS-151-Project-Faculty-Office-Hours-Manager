@@ -51,7 +51,7 @@ public class facultyHomeController {
         });
 
         btn3.setOnAction(e->{
-            courseController courseApp = new courseController();
+            CourseController courseApp = new CourseController();
             try {
                 Stage newStage = new Stage();
                 courseApp.start(newStage);
