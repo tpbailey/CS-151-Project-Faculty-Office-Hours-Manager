@@ -15,7 +15,7 @@ public class CourseController extends Application {
     private TextField courseCodeField;
     private TextField courseNameField;
     private TextField sectionNumberField;
-    private CourseDAO courseDAO = new CourseimpDAO();
+    private CourseDAO courseDAO = new CourseDAO();
 
     @Override
     public void start(Stage stage) {
@@ -62,7 +62,6 @@ public class CourseController extends Application {
             return;
         }
 
-        // duplicate course entries
         ObservableList<Course> existingCourses = courseDAO.getAll();
         for (Course c : existingCourses) {
             if (c.getCourseCode().equalsIgnoreCase(code) &&
@@ -71,10 +70,8 @@ public class CourseController extends Application {
                 showAlert(Alert.AlertType.ERROR, "This course entry already exists.");
                 return;
             }
-
         }
 
-        // no duplicates, run this code
         Course course = new Course(code, name, section);
         courseDAO.save(course);
         displayTable();
@@ -111,5 +108,9 @@ public class CourseController extends Application {
         alert.setTitle("Input Error");
         alert.setHeaderText(message);
         alert.showAndWait();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

@@ -12,14 +12,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class timeslotController extends Application {
+public class TimeSlotController extends Application {
     private ComboBox<String> startTime;
     private ComboBox<String> endTime;
     private ObservableList<TimeSlot> timeSlotList;
@@ -30,7 +26,6 @@ public class timeslotController extends Application {
         Label header = new Label("Define Semester's Time Slots");
         header.setStyle("-fx-font-size: 25px; -fx-font-weight: bold;");
 
-        // creating time selectors
         startTime = new ComboBox<>();
         endTime = new ComboBox<>();
         ObservableList<String> times = generateTimes();
@@ -39,14 +34,12 @@ public class timeslotController extends Application {
         startTime.setPromptText("From Hour");
         endTime.setPromptText("To Hour");
 
-        // button to add a new time slot
         Button addButton = new Button("Add Time Slot");
         addButton.setOnAction(e -> addTimeSlot());
 
         HBox timeInputBox = new HBox(10, new Label("From:"), startTime, new Label("To:"), endTime, addButton);
         timeInputBox.setAlignment(Pos.CENTER);
 
-        //  creating the table view!
         tableView = new TableView<>();
         timeSlotList = FXCollections.observableArrayList();
         tableView.setItems(timeSlotList);
@@ -58,14 +51,12 @@ public class timeslotController extends Application {
         toCol.setCellValueFactory(new PropertyValueFactory<>("to"));
         tableView.getColumns().addAll(fromCol, toCol);
 
-        // this is to upload everything into the timeslots.csv
         Button saveButton = new Button("Save Time Slots");
         saveButton.setOnAction(e -> saveTimeSlots());
 
         HBox buttonBox = new HBox(saveButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // setting styling to be the same as other pages
         VBox root = new VBox(20, header, timeInputBox, tableView, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
@@ -74,13 +65,9 @@ public class timeslotController extends Application {
         Scene scene = new Scene(root, 700, 500);
         stage.setTitle("Time Slots");
         stage.setScene(scene);
-        //stage.setScene(new Scene(vb, 700, 500));
         stage.show();
     }
 
-    /**
-     * creating times from 00:00 to 23:59
-     */
     private ObservableList<String> generateTimes() {
         List<String> times = new ArrayList<>();
         for (int hour = 0; hour < 24; hour++) {
@@ -91,9 +78,6 @@ public class timeslotController extends Application {
         return FXCollections.observableArrayList(times);
     }
 
-    /**
-     * adding new time slots to table validation
-     */
     private void addTimeSlot() {
         String from = startTime.getValue();
         String to = endTime.getValue();
@@ -110,14 +94,10 @@ public class timeslotController extends Application {
 
         TimeSlot slot = new TimeSlot(from, to);
         timeSlotList.add(slot);
-        // Optionally clear selections after adding
         startTime.getSelectionModel().clearSelection();
         endTime.getSelectionModel().clearSelection();
     }
 
-    /**
-     * is the start time before the end time?
-     */
     private boolean isValidTimeSlot(String from, String to) {
         return convertToMinutes(from) < convertToMinutes(to);
     }
@@ -129,34 +109,20 @@ public class timeslotController extends Application {
         return hour * 60 + minute;
     }
 
-    /**
-     * saving list of times into the timeslots.csv
-     */
     private void saveTimeSlots() {
         if (timeSlotList.isEmpty()) {
             showAlert(Alert.AlertType.INFORMATION, "Information", "No time slots to save.");
             return;
         }
-        File file = new File("timeslots.csv");
-        try (FileWriter fw = new FileWriter(file, false);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter pw = new PrintWriter(bw)) {
 
-            // Write header
-            //pw.println("From,To");
-            // Write each time slot
-            for (TimeSlot ts : timeSlotList) {
-                pw.println(ts.getFrom() + "," + ts.getTo());
-            }
+        try {
+            TimeSlotDAO.save(timeSlotList, "timeslots.csv");
             showAlert(Alert.AlertType.INFORMATION, "Success", "Time slots saved successfully.");
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to save time slots: " + ex.getMessage());
         }
     }
 
-    /**
-     * error warning
-     */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle("Time Slots");

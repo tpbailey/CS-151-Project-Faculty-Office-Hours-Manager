@@ -42,7 +42,7 @@ public class facultyHomeController {
             }
         });
         btn2.setOnAction(e -> {
-            timeslotController timeslotApp = new timeslotController();
+            TimeSlotController timeslotApp = new TimeSlotController();
             try {
                 timeslotApp.start(primaryStage);
             } catch (Exception ex) {
