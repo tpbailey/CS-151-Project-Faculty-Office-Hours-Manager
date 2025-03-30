@@ -78,7 +78,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Creates time strings from 00:00 to 23:59 in 15-minute increments.
+     * creating the increments of time with 15 minutes
      */
     private ObservableList<String> generateTimes() {
         List<String> times = new ArrayList<>();
@@ -90,9 +90,6 @@ public class timeslotController extends Application {
         return FXCollections.observableArrayList(times);
     }
 
-    /**
-     * Adds a new time slot to the table after validation and sorts the list by "From Hour" (ascending).
-     */
     private void addTimeSlot() {
         String from = startTime.getValue();
         String to = endTime.getValue();
@@ -111,7 +108,11 @@ public class timeslotController extends Application {
         timeSlotList.add(slot);
 
         // Sort the list by "From Hour" in ascending order
-        timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+        timeSlotList.sort((ts1, ts2) -> {
+            int from1 = convertToMinutes(ts1.getFrom());
+            int from2 = convertToMinutes(ts2.getFrom());
+            return Integer.compare(from1, from2);
+        });
 
         // Optionally clear selections after adding
         startTime.getSelectionModel().clearSelection();
@@ -119,15 +120,12 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Checks if the start time is before the end time.
+     * making sure start time is before end time
      */
     private boolean isValidTimeSlot(String from, String to) {
         return convertToMinutes(from) < convertToMinutes(to);
     }
 
-    /**
-     * Converts a time string (e.g., "3:30") to minutes since midnight.
-     */
     private int convertToMinutes(String time) {
         String[] parts = time.split(":");
         int hour = Integer.parseInt(parts[0]);
@@ -135,9 +133,6 @@ public class timeslotController extends Application {
         return hour * 60 + minute;
     }
 
-    /**
-     * Loads time slot records from the timeslots.csv file into the observable list.
-     */
     private void loadTimeSlotsFromFile() {
         File file = new File("timeslots.csv");
         if (!file.exists()) {
@@ -155,8 +150,12 @@ public class timeslotController extends Application {
                     timeSlotList.add(ts);
                 }
             }
-            // Sort the list after loading
-            timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+            // Sort the list after loading by "From Hour"
+            timeSlotList.sort((ts1, ts2) -> {
+                int from1 = convertToMinutes(ts1.getFrom());
+                int from2 = convertToMinutes(ts2.getFrom());
+                return Integer.compare(from1, from2);
+            });
         } catch (IOException ex) {
             ex.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to load time slots: " + ex.getMessage());
@@ -164,7 +163,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Saves the list of time slots to the timeslots.csv file.
+     * updating the timeslots.csv file.
      */
     private void saveTimeSlots() {
         if (timeSlotList.isEmpty()) {
@@ -187,7 +186,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Displays an alert dialog.
+     * showing error/alert
      */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert alert = new Alert(type);
