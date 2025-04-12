@@ -60,7 +60,15 @@ public class facultyHomeController {
             }
         });
 
-
+        btn4.setOnAction(e -> {
+            scheduleController scheduleApp = new scheduleController();
+            try {
+                Stage newStage = new Stage();
+                scheduleApp.start(newStage); // Ensure ScheduleController has start(Stage)
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
 
         primaryStage.setScene(new Scene(vb, 700, 500));
