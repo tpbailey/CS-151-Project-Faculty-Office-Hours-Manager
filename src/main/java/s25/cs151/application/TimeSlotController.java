@@ -101,6 +101,14 @@ public class TimeSlotController extends Application {
             return;
         }
 
+        for (TimeSlot ts : timeSlotList) {
+            if (ts.getFrom().equals(from) && ts.getTo().equals(to)) {
+                showAlert(Alert.AlertType.ERROR, "Duplicate Time Slot", "This time slot already exists.");
+                return;
+            }
+        }
+
+
         TimeSlot slot = new TimeSlot(from, to);
         timeSlotList.add(slot);
         // Sort the list by "From" time (converted to minutes) in ascending order.
