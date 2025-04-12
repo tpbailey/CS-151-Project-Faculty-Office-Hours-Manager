@@ -60,6 +60,15 @@ public class facultyHomeController {
             }
         });
 
+        btn4.setOnAction(e->{
+            scheduleController scheduleApp = new scheduleController();
+            try {
+                Stage newStage = new Stage();
+                scheduleApp.start(newStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
 
 
