@@ -1,8 +1,8 @@
 Name of application: Faculty Ease
-Version: 0.5
+Version: 0.6
 Who did what:
-1.Thel Nu Zaw - redesigning officehour page to have controller, bean and dao, and implementing the course page
-2.Tanequa Bailey -
-3.Sanya Mandhyan -
-4.Natalie Tran - created time slot page, formatted ui, added csv
+1.Thel Nu Zaw - Did schedule class and scheduleDAO.
+2.Tanequa Bailey - Did scheduleController class.
+3.Sanya Mandhyan - Populated csv files.
+4.Natalie Tran - Cleaned and zipped.
 Any other instruction that users need to know: N/A
