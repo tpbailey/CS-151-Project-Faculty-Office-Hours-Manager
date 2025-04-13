@@ -151,13 +151,15 @@ public class scheduleController extends Application {
                 }
             }
 
-            // Create a schedule object
             Schedule schedule = new Schedule(
                     studentFullName.getText(),
                     scheduleDatePicker.getValue().toString(),
-                    reason.getText(),
-                    comment.getText()
+                    timeDropdown.getValue(), // Time Slot from dropdown
+                    courseDropdown.getValue(), // Course from dropdown
+                    reason.getText().isEmpty() ? "N/A" : reason.getText(), // Handle optional reason
+                    comment.getText().isEmpty() ? "N/A" : comment.getText() // Handle optional comment
             );
+
             writescheduleCSV(schedule);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
 
@@ -193,8 +195,15 @@ public class scheduleController extends Application {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length >= 6) { // Ensure at least 6 fields
-                    schedules.add(new Schedule(parts[0], parts[1], parts[4], parts[2] + " - " + parts[3]));
+                if (parts.length >= 6) { // Ensure all necessary fields exist
+                    schedules.add(new Schedule(
+                            parts[0],                // Student Name
+                            parts[1],                // Schedule Date
+                            parts[2] + " - " + parts[3], // Time Slot (combine From and To)
+                            parts[4],                // Course
+                            parts[5],                // Reason
+                            parts[6]                 // Comment
+                    ));
                 } else {
                     System.out.println("Skipping line due to insufficient columns: " + line);
                 }
@@ -204,20 +213,29 @@ public class scheduleController extends Application {
             e.printStackTrace();
         }
 
+        // Define Table Columns
         TableColumn<Schedule, String> nameCol = new TableColumn<>("Student Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("studentFullName"));
 
         TableColumn<Schedule, String> dateCol = new TableColumn<>("Date");
         dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
 
-        TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
-        courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
-
         TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time Slot");
         timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
 
-        table.getColumns().addAll(nameCol, dateCol, courseCol, timeSlotCol);
+        TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
+        courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
+
+        TableColumn<Schedule, String> reasonCol = new TableColumn<>("Reason");
+        reasonCol.setCellValueFactory(new PropertyValueFactory<>("reason"));
+
+        TableColumn<Schedule, String> commentCol = new TableColumn<>("Comment");
+        commentCol.setCellValueFactory(new PropertyValueFactory<>("comment"));
+
+        table.getColumns().addAll(nameCol, dateCol, timeSlotCol, courseCol, reasonCol, commentCol);
         table.setItems(schedules);
+
+        // Set Default Sort Order
         table.getSortOrder().add(dateCol); // Sort by date
         table.getSortOrder().add(timeSlotCol); // Sort by time slot
 

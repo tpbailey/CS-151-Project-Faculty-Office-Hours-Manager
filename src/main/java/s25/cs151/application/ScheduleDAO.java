@@ -33,11 +33,21 @@ public class ScheduleDAO {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 4) { // Ensure the file format is valid
-                    schedules.add(new Schedule(parts[0], parts[1], parts[2], parts[3]));
+                if (parts.length >= 4) { // Ensure valid file format
+                    schedules.add(new Schedule(
+                            parts[0],                  // Student Name
+                            parts[1],                  // Schedule Date
+                            parts[2],                  // Time Slot
+                            parts[3],                  // Course
+                            parts.length > 4 ? parts[4] : "N/A", // Reason (default to "N/A" if missing)
+                            parts.length > 5 ? parts[5] : "N/A"  // Comment (default to "N/A" if missing)
+                    ));
+                } else {
+                    System.out.println("Skipping line due to insufficient columns: " + line);
                 }
             }
         }
+
 
         return schedules;
     }
