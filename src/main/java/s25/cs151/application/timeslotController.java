@@ -150,7 +150,7 @@ public class timeslotController extends Application {
 
             // Write each time slot to the file
             for (TimeSlot ts : timeSlotList) {
-                pw.println(ts.getFrom() + "," + ts.getTo());
+                pw.println(ts.getFrom() + "-" + ts.getTo());
             }
             showAlert(Alert.AlertType.INFORMATION, "Success", "Time slots saved successfully.");
         } catch (Exception ex) {

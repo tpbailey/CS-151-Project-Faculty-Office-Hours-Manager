@@ -34,9 +34,6 @@ public class courseController extends Application {
         sectionNumber = new TextField();
         Label sectionNumberLabel = new Label("Enter Section Number");
 
-
-
-
         Button submit = new Button("Submit");
         submit.setOnAction(e -> checkrequired());
 
@@ -60,8 +57,6 @@ public class courseController extends Application {
         stage.setScene(new Scene(vb, 700,500));
         stage.setTitle("Course");
         stage.show();
-
-
     }
 
     private void writecourseCSV(Course course) throws FileNotFoundException {
@@ -84,7 +79,6 @@ public class courseController extends Application {
         String section = sectionNumber.getText();
         if(courseCode.getText().isEmpty() ){
             showAlert(Alert.AlertType.ERROR, "Course Code is required.");
-
         }
         if(courseName.getText().isEmpty() ){
             showAlert(Alert.AlertType.ERROR, "Course Name is required.");
@@ -99,8 +93,6 @@ public class courseController extends Application {
         }catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
         }
-
-
     }
 
     private void displaycourseTb() {
