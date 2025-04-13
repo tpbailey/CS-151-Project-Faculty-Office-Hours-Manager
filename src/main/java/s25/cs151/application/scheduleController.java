@@ -18,7 +18,7 @@ import java.time.LocalDate;
 
 import java.io.*;
 
-public class scheduleController extends Application{
+public class scheduleController extends Application {
     private TextField studentFullName;
     DatePicker scheduleDatePicker = new DatePicker();
     private ComboBox<String> timeDropdown;
@@ -110,7 +110,7 @@ public class scheduleController extends Application{
         vb.setSpacing(10);
         vb.setStyle("-fx-alignment: center;" + "-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
 
-        stage.setScene(new Scene(vb, 700,500));
+        stage.setScene(new Scene(vb, 700, 500));
         stage.setTitle("Schedule office hour");
         stage.show();
 
@@ -192,10 +192,9 @@ public class scheduleController extends Application{
         try (BufferedReader br = new BufferedReader(new FileReader("schedule.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
-                System.out.println("Read line: " + line); // Debugging output
                 String[] parts = line.split(",");
-                if (parts.length >= 4) { // Adjust based on minimum necessary fields
-                    schedules.add(new Schedule(parts[0], parts[1], parts[4], parts[5]));
+                if (parts.length >= 6) { // Ensure at least 6 fields
+                    schedules.add(new Schedule(parts[0], parts[1], parts[4], parts[2] + " - " + parts[3]));
                 } else {
                     System.out.println("Skipping line due to insufficient columns: " + line);
                 }
@@ -211,14 +210,16 @@ public class scheduleController extends Application{
         TableColumn<Schedule, String> dateCol = new TableColumn<>("Date");
         dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
 
-        TableColumn<Schedule, String> reasonCol = new TableColumn<>("Reason");
-        reasonCol.setCellValueFactory(new PropertyValueFactory<>("reason"));
+        TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
+        courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
 
-        TableColumn<Schedule, String> commentCol = new TableColumn<>("Comment");
-        commentCol.setCellValueFactory(new PropertyValueFactory<>("comment"));
+        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time Slot");
+        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
 
-        table.getColumns().addAll(nameCol, dateCol, reasonCol, commentCol);
+        table.getColumns().addAll(nameCol, dateCol, courseCol, timeSlotCol);
         table.setItems(schedules);
+        table.getSortOrder().add(dateCol); // Sort by date
+        table.getSortOrder().add(timeSlotCol); // Sort by time slot
 
         VBox container = new VBox(10, new Label("Scheduled Office Hours:"), table);
         container.setPadding(new Insets(15));
@@ -227,8 +228,6 @@ public class scheduleController extends Application{
         tableStage.setScene(new Scene(container, 700, 400));
         tableStage.show();
     }
-
-
 
 
     private void showAlert(Alert.AlertType alertType, String header, String content) {
