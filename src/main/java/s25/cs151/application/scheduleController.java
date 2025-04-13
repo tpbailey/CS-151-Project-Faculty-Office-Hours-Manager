@@ -192,12 +192,16 @@ public class scheduleController extends Application{
         try (BufferedReader br = new BufferedReader(new FileReader("schedule.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
+                System.out.println("Read line: " + line); // Debugging output
                 String[] parts = line.split(",");
-                if (parts.length == 6) {
+                if (parts.length >= 4) { // Adjust based on minimum necessary fields
                     schedules.add(new Schedule(parts[0], parts[1], parts[4], parts[5]));
+                } else {
+                    System.out.println("Skipping line due to insufficient columns: " + line);
                 }
             }
         } catch (IOException e) {
+            System.out.println("Error reading schedule.csv: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -223,6 +227,7 @@ public class scheduleController extends Application{
         tableStage.setScene(new Scene(container, 700, 400));
         tableStage.show();
     }
+
 
 
 
