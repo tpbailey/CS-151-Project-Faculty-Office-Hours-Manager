@@ -1,6 +1,7 @@
 package s25.cs151.application;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -12,6 +13,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 
@@ -136,6 +139,7 @@ public class scheduleController extends Application{
         Schedule schedule = new Schedule(name, date, time, course, reas, comm);
         try {
             writeScheduleCSV(schedule);
+
             displayScheduleTb();
         }catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
@@ -167,24 +171,24 @@ public class scheduleController extends Application{
 
     private void displayScheduleTb() {
         scheduleTable = createScheduleTableView();
-        scheduleTable.setItems(readScheduleCSV());
-
 
         ObservableList<Schedule> schedules = readScheduleCSV();
 
-// DEBUG: Print list size and contents
-//        System.out.println("Loaded schedules: " + schedules.size());
-//        for (Schedule s : schedules) {
-//            System.out.println("Schedule entry -> " + s.getStudentFullName() + ", " + s.getScheduleDate() + ", " + s.getTimeSlot() + ", " + s.getCourse() + ", " + s.getReason() + ", " + s.getComment());
-//        }
-
-        scheduleTable = createScheduleTableView();
-        scheduleTable.setItems(schedules);
+        scheduleTable.setItems(readScheduleCSV());
 
 
+        // Configure sorting AFTER setting items
+        TableColumn<Schedule, ?> dateCol = scheduleTable.getColumns().get(1);
+        TableColumn<Schedule, ?> timeCol = scheduleTable.getColumns().get(2);
+        dateCol.setSortType(TableColumn.SortType.ASCENDING);
+        timeCol.setSortType(TableColumn.SortType.ASCENDING);
+        scheduleTable.getSortOrder().setAll(dateCol, timeCol);
+        scheduleTable.sort();
 
 
 
+//        scheduleTable = createScheduleTableView();
+//        scheduleTable.setItems(schedules);
 
 
         VBox container = new VBox(10, new Label("Schedule"), scheduleTable);
@@ -203,11 +207,35 @@ public class scheduleController extends Application{
         TableColumn<Schedule, String> nameCol = new TableColumn<>("Student's name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("studentFullName"));
 
-        TableColumn<Schedule, String> dateCol = new TableColumn<>("Schedule date");
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
+        // Schedule Date (convert String to LocalDate for proper sorting)
+        TableColumn<Schedule, LocalDate> dateCol = new TableColumn<>("Schedule date");
+        dateCol.setCellValueFactory(cell ->
+                new SimpleObjectProperty<>(LocalDate.parse(
+                        cell.getValue().getScheduleDate(),
+                        DateTimeFormatter.ofPattern("MM/dd/yyyy")
+                ))
+        );
+        dateCol.setComparator(LocalDate::compareTo);
 
-        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time slot");
-        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
+        // Time Slot (convert String to LocalTime for proper sorting)
+        TableColumn<Schedule, LocalTime> timeSlotCol = new TableColumn<>("Time slot");
+        timeSlotCol.setCellValueFactory(cell ->
+                new SimpleObjectProperty<>(LocalTime.parse(
+                        cell.getValue().getTimeSlot().split("-")[0], // Extract start time
+                        DateTimeFormatter.ofPattern("H:mm")
+                ))
+        );
+        timeSlotCol.setComparator(LocalTime::compareTo);
+
+
+
+
+
+//        TableColumn<Schedule, String> dateCol = new TableColumn<>("Schedule date");
+//        dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
+//
+//        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time slot");
+//        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
 
         TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
         courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
@@ -224,6 +252,8 @@ public class scheduleController extends Application{
 
         return table;
     }
+
+
 
     private ObservableList<Schedule> readScheduleCSV() {
         ObservableList<Schedule> list = FXCollections.observableArrayList();

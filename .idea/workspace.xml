@@ -5,19 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9b21b566-3380-467d-bf2b-bc3a949cc0b5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/ScheduleDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/ScheduleimpDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/course.csv" beforeDir="false" afterPath="$PROJECT_DIR$/course.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/officeHours.csv" beforeDir="false" afterPath="$PROJECT_DIR$/officeHours.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/s25/cs151/application/Schedule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/Schedule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/s25/cs151/application/courseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/courseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schedule.csv" beforeDir="false" afterPath="$PROJECT_DIR$/schedule.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/s25/cs151/application/scheduleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/scheduleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/s25/cs151/application/timeslotController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/timeslotController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/s25/cs151/application/Schedule.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/s25/cs151/application/Schedule.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/s25/cs151/application/courseController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/s25/cs151/application/courseController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/s25/cs151/application/scheduleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/s25/cs151/application/scheduleController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/s25/cs151/application/timeslotController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/s25/cs151/application/timeslotController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/timeslots.csv" beforeDir="false" afterPath="$PROJECT_DIR$/timeslots.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
