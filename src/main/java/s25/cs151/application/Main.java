@@ -16,12 +16,25 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+    /**
+     *
+     * @param primarystage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     * @throws IOException
+     */
     @Override
     public void start(Stage primarystage) throws IOException {
         facultyHomeController hp = new facultyHomeController();
         hp.display(primarystage);
     }
 
+    /**
+     * @
+     * @param args
+     * @throws FileNotFoundException
+     */
     public static void main(String[] args) throws FileNotFoundException {
         launch();
     }
