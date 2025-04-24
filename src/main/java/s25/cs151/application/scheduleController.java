@@ -186,11 +186,6 @@ public class scheduleController extends Application{
         scheduleTable.sort();
 
 
-
-//        scheduleTable = createScheduleTableView();
-//        scheduleTable.setItems(schedules);
-
-
         VBox container = new VBox(10, new Label("Schedule"), scheduleTable);
         container.setPadding(new javafx.geometry.Insets(15));
         Scene tableScene = new Scene(container, 700, 400);
@@ -227,15 +222,6 @@ public class scheduleController extends Application{
         );
         timeSlotCol.setComparator(LocalTime::compareTo);
 
-
-
-
-
-//        TableColumn<Schedule, String> dateCol = new TableColumn<>("Schedule date");
-//        dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
-//
-//        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time slot");
-//        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
 
         TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
         courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
@@ -276,24 +262,6 @@ public class scheduleController extends Application{
                     String course = courseName+ " " + code + " " + section;
                     String reason = parts[6].trim().isEmpty() ? "N/A" : parts[6].trim();
                     String comment = parts[7].trim().isEmpty() ? "N/A" : parts[7].trim();
-
-
-
-
-
-                // Split with limit -1 to preserve trailing empty values
-//                String[] parts = line.split(",\\s*", -1);
-//
-//                if (parts.length >= 6) {  // Minimum required columns
-//                    String name = parts[0];
-//                    String date = parts[1];
-//                    String timeSlot = parts[2];
-//                    String code = parts[3];
-//                    String course = parts[4];
-//
-//                    // Only the LAST TWO entries get "na" conversion
-//                    String reason = (parts.length > 5 && parts[5].isEmpty()) ? "N/A" : parts[5];
-//                    String comment = (parts.length > 6 && parts[6].isEmpty()) ? "N/A" : parts[6];
 
                     list.add(new Schedule(name, date, timeSlot, course, reason, comment));
                 }

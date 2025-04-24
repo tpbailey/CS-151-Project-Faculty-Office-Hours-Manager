@@ -29,13 +29,6 @@ public class searchOfficeHoursController extends Application {
     @FXML
     private TextField studentName;
     @FXML TableView<Schedule> scheduleTable;
-//    @FXML void search(ActionEvent event){
-    ////    if (studentName.getText().isEmpty()) {
-    ////            showAlert(Alert.AlertType.ERROR, "Student's name is required.");
-    ////            return;
-    ////        }
-//    }
-
 
     private List<Schedule> searchList(String searchWords, List<Schedule> listOfSchedules){
         List<String> searchWordsArray = Arrays.asList(searchWords.trim().split(" "));
@@ -68,6 +61,14 @@ public class searchOfficeHoursController extends Application {
         // Initialize scheduleTable
         scheduleTable = createScheduleTableView();
         scheduleTable.setItems(namesList); // Populate with initial data
+
+        // Configure sorting AFTER setting items
+        TableColumn<Schedule, ?> dateCol = scheduleTable.getColumns().get(1);
+        TableColumn<Schedule, ?> timeCol = scheduleTable.getColumns().get(2);
+        dateCol.setSortType(TableColumn.SortType.DESCENDING);
+        timeCol.setSortType(TableColumn.SortType.DESCENDING);
+        scheduleTable.getSortOrder().setAll(dateCol, timeCol);
+        scheduleTable.sort();
 
         VBox vb = new VBox(10, header, grid, searchBarContainer, searchButton, scheduleTable);
         studentName.prefWidthProperty().bind(vb.widthProperty().divide(2));
@@ -104,7 +105,11 @@ public class searchOfficeHoursController extends Application {
         dateCol.setComparator(LocalDate::compareTo);
 
         TableColumn<Schedule, LocalTime> timeSlotCol = new TableColumn<>("Time slot");
-        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
+        //timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
+
+        timeSlotCol.setCellValueFactory(cell -> new SimpleObjectProperty<>(
+                LocalTime.parse(cell.getValue().getTimeSlot().split("-")[0], DateTimeFormatter.ofPattern("H:mm"))
+        ));
 
         timeSlotCol.setComparator(LocalTime::compareTo);
 
