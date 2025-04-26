@@ -154,10 +154,13 @@ public class scheduleController extends Application{
             // Create a schedule object
             Schedule schedule = new Schedule(
                     studentFullName.getText(),
-                    scheduleDatePicker.getValue().toString(),
+                    scheduleDatePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                    timeDropdown.getValue(),
+                    courseDropdown.getValue(),
                     reason.getText(),
                     comment.getText()
             );
+
             writescheduleCSV(schedule);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
 
@@ -174,8 +177,8 @@ public class scheduleController extends Application{
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", true)))) {
             pw.println(schedule.getStudentFullName() + "," +
                     schedule.getScheduleDate() + "," +
-                    timeDropdown.getValue() + "," +
-                    courseDropdown.getValue() + "," +
+                    schedule.getTimeSlot() + "," +     // <-- Correct
+                    schedule.getCourse() + "," +        // <-- Correct
                     schedule.getReason() + "," +
                     schedule.getComment());
         } catch (IOException e) {
@@ -183,6 +186,7 @@ public class scheduleController extends Application{
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to save schedule.");
         }
     }
+
 
 
     private void displayscheduleTb() {
