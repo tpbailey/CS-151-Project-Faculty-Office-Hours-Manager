@@ -1,8 +1,8 @@
 Name of application: Faculty Ease
-Version: 0.5
+Version: 0.7
 Who did what:
-1.Thel Nu Zaw - reimplementing officehour page(dao,bean, controller) and making course page for dao, bean and controller class, and created dao for time slot page.
-2.Tanequa Bailey - bean and controller classes
-3.Sanya Mandhyan - formatting ui
-4.Natalie Tran - created time slot page, formatted ui, added timeslots. csv, added error page for course page
+1.Thel Nu Zaw - readMe file and part 2 (populated the product with 10 "Office hours Schedule"
+2.Tanequa Bailey - part 3 (Search Office Hours Schedule Page)
+3.Sanya Mandhyan - fixed errors in part 3 and did part 4 (deleted any “Office Hours Schedule")
+4.Natalie Tran - cleaned and zipped the file
 Any other instruction that users need to know: N/A
