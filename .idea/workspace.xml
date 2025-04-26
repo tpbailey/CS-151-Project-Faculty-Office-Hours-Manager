@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9b21b566-3380-467d-bf2b-bc3a949cc0b5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schedule.csv" beforeDir="false" afterPath="$PROJECT_DIR$/schedule.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/s25/cs151/application/scheduleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/scheduleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/s25/cs151/application/searchOfficeHoursController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/s25/cs151/application/searchOfficeHoursController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/s25/cs151/application/scheduleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/s25/cs151/application/scheduleController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/s25/cs151/application/searchOfficeHoursController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/s25/cs151/application/searchOfficeHoursController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/schedule.csv" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/schedule.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/target/classes/schedule.csv" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/target/classes/schedule.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,6 +73,19 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="FacultyEase" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="FacultyEase" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
