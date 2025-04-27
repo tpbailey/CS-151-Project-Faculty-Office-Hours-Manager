@@ -165,7 +165,7 @@ public class scheduleController extends Application{
             showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
 
             // Save the schedule and display the table
-            displayscheduleTb();
+            //displayscheduleTb();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,10 +175,17 @@ public class scheduleController extends Application{
 
     private void writescheduleCSV(Schedule schedule) {
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", true)))) {
+            String[] courseParts = schedule.getCourse().split(" ");
+            String courseName = courseParts.length > 0 ? courseParts[0] : "N/A";
+            String code = courseParts.length > 1 ? courseParts[1] : "N/A";
+            String section = courseParts.length > 2 ? courseParts[2] : "N/A";
+
             pw.println(schedule.getStudentFullName() + "," +
                     schedule.getScheduleDate() + "," +
-                    schedule.getTimeSlot() + "," +     // <-- Correct
-                    schedule.getCourse() + "," +        // <-- Correct
+                    schedule.getTimeSlot() + "," +
+                    courseName + "," +
+                    code + "," +
+                    section + "," +
                     schedule.getReason() + "," +
                     schedule.getComment());
         } catch (IOException e) {
@@ -189,7 +196,7 @@ public class scheduleController extends Application{
 
 
 
-    private void displayscheduleTb() {
+    /*private void displayscheduleTb() {
         TableView<Schedule> table = new TableView<>();
         ObservableList<Schedule> schedules = FXCollections.observableArrayList();
 
@@ -198,7 +205,7 @@ public class scheduleController extends Application{
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 6) {
-                    schedules.add(new Schedule(parts[0], parts[1], parts[4], parts[5]));
+                    schedules.add(new Schedule(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
                 }
             }
         } catch (IOException e) {
@@ -211,22 +218,29 @@ public class scheduleController extends Application{
         TableColumn<Schedule, String> dateCol = new TableColumn<>("Date");
         dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
 
+        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time Slot");
+        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
+
+        TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
+        courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
+
         TableColumn<Schedule, String> reasonCol = new TableColumn<>("Reason");
         reasonCol.setCellValueFactory(new PropertyValueFactory<>("reason"));
 
         TableColumn<Schedule, String> commentCol = new TableColumn<>("Comment");
         commentCol.setCellValueFactory(new PropertyValueFactory<>("comment"));
 
-        table.getColumns().addAll(nameCol, dateCol, reasonCol, commentCol);
+        table.getColumns().addAll(nameCol, dateCol, timeSlotCol, courseCol, reasonCol, commentCol);
         table.setItems(schedules);
 
         VBox container = new VBox(10, new Label("Scheduled Office Hours:"), table);
         container.setPadding(new Insets(15));
         Stage tableStage = new Stage();
         tableStage.setTitle("Schedule Table");
-        tableStage.setScene(new Scene(container, 700, 400));
+        tableStage.setScene(new Scene(container, 800, 500)); // Wider for 6 columns
         tableStage.show();
-    }
+    }*/
+
 
 
 
