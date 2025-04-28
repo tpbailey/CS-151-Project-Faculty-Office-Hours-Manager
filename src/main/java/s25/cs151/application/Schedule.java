@@ -1,15 +1,14 @@
 package s25.cs151.application;
 
-public class Schedule{
+public class Schedule {
     private String studentFullName;
     private String scheduleDate;
-    private String timeSlot;
-    private String course;
+    private String timeSlot; // <-- ADD THIS
+    private String course;   // <-- ADD THIS
     private String reason;
     private String comment;
 
-    public Schedule(String studentFullName, String scheduleDate, String timeSlot,
-                    String course, String reason, String comment){
+    public Schedule(String studentFullName, String scheduleDate, String timeSlot, String course, String reason, String comment) {
         this.studentFullName = studentFullName;
         this.scheduleDate = scheduleDate;
         this.timeSlot = timeSlot;
@@ -17,41 +16,60 @@ public class Schedule{
         this.reason = reason;
         this.comment = comment;
     }
+    public Schedule(String studentFullName, String scheduleDate, String reason, String comment) {
+        this.studentFullName = studentFullName;
+        this.scheduleDate = scheduleDate;
+        this.timeSlot = "N/A";  // Default if missing
+        this.course = "N/A";    // Default if missing
+        this.reason = reason;
+        this.comment = comment;
+    }
 
-    public String getStudentFullName(){
+    public String getStudentFullName() {
         return studentFullName;
     }
-    public void setStudentFullName(String studentFullName){
+
+    public void setStudentFullName(String studentFullName) {
         this.studentFullName = studentFullName;
     }
-    public String getScheduleDate(){
+
+    public String getScheduleDate() {
         return scheduleDate;
     }
-    public void setScheduleDate(String scheduleDate){
+
+    public void setScheduleDate(String scheduleDate) {
         this.scheduleDate = scheduleDate;
     }
-    public String getTimeSlot(){
+
+    public String getTimeSlot() {    // <-- ADD THIS
         return timeSlot;
     }
-    public void setTimeSlot(String timeSlot){
+
+    public void setTimeSlot(String timeSlot) {  // <-- ADD THIS
         this.timeSlot = timeSlot;
     }
-    public String getCourse(){
+
+    public String getCourse() {    // <-- ADD THIS
         return course;
     }
-    public void setCourse(String course){
+
+    public void setCourse(String course) {  // <-- ADD THIS
         this.course = course;
     }
-    public String getReason(){
+
+    public String getReason() {
         return reason;
     }
-    public void setReason(String reason){
+
+    public void setReason(String reason) {
         this.reason = reason;
     }
-    public String getComment(){
+
+    public String getComment() {
         return comment;
     }
-    public void setComment(String comment){
+
+    public void setComment(String comment) {
         this.comment = comment;
     }
 }
