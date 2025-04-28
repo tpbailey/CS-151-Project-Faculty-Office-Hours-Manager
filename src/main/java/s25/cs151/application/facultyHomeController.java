@@ -43,7 +43,7 @@ public class facultyHomeController {
             }
         });
         btn2.setOnAction(e -> {
-            timeslotController timeslotApp = new timeslotController();
+            TimeSlotController timeslotApp = new TimeSlotController();
             try {
                 timeslotApp.start(primaryStage);
             } catch (Exception ex) {
@@ -52,7 +52,7 @@ public class facultyHomeController {
         });
 
         btn3.setOnAction(e->{
-            courseController courseApp = new courseController();
+            CourseController courseApp = new CourseController();
             try {
                 Stage newStage = new Stage();
                 courseApp.start(newStage);

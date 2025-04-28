@@ -12,14 +12,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class timeslotController extends Application {
+public class TimeSlotController extends Application {
     private ComboBox<String> startTime;
     private ComboBox<String> endTime;
     private ObservableList<TimeSlot> timeSlotList;
@@ -30,7 +27,6 @@ public class timeslotController extends Application {
         Label header = new Label("Define Semester's Time Slots");
         header.setStyle("-fx-font-size: 25px; -fx-font-weight: bold;");
 
-        // creating time selectors
         startTime = new ComboBox<>();
         endTime = new ComboBox<>();
         ObservableList<String> times = generateTimes();
@@ -39,14 +35,12 @@ public class timeslotController extends Application {
         startTime.setPromptText("From Hour");
         endTime.setPromptText("To Hour");
 
-        // button to add a new time slot
         Button addButton = new Button("Add Time Slot");
         addButton.setOnAction(e -> addTimeSlot());
 
         HBox timeInputBox = new HBox(10, new Label("From:"), startTime, new Label("To:"), endTime, addButton);
         timeInputBox.setAlignment(Pos.CENTER);
 
-        // creating the table view
         tableView = new TableView<>();
         timeSlotList = FXCollections.observableArrayList();
         tableView.setItems(timeSlotList);
@@ -58,18 +52,18 @@ public class timeslotController extends Application {
         toCol.setCellValueFactory(new PropertyValueFactory<>("to"));
         tableView.getColumns().addAll(fromCol, toCol);
 
-        // button to upload everything into timeslots.csv
+        loadTimeSlotsFromFile();
+
         Button saveButton = new Button("Save Time Slots");
         saveButton.setOnAction(e -> saveTimeSlots());
 
         HBox buttonBox = new HBox(saveButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // setting styling to be the same as other pages
         VBox root = new VBox(20, header, timeInputBox, tableView, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
-        root.setStyle("-fx-alignment: center;-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
+        root.setStyle("-fx-alignment: center;-fx-background-color: radial-gradient(center 50% 50%, radius 60%, #fceabb, #f8b500);");
 
         Scene scene = new Scene(root, 700, 500);
         stage.setTitle("Time Slots");
@@ -78,7 +72,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Creates time strings from 00:00 to 23:59 in 15-minute increments.
+     * 15-minute increments for the times
      */
     private ObservableList<String> generateTimes() {
         List<String> times = new ArrayList<>();
@@ -91,7 +85,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Adds a new time slot to the table after validation and sorts the list by "From Hour" (ascending).
+     * adding a new time slot to the table after validation and sorts the list by start time
      */
     private void addTimeSlot() {
         String from = startTime.getValue();
@@ -107,27 +101,28 @@ public class timeslotController extends Application {
             return;
         }
 
+        for (TimeSlot ts : timeSlotList) {
+            if (ts.getFrom().equals(from) && ts.getTo().equals(to)) {
+                showAlert(Alert.AlertType.ERROR, "Duplicate Time Slot", "This time slot already exists.");
+                return;
+            }
+        }
+
+
         TimeSlot slot = new TimeSlot(from, to);
         timeSlotList.add(slot);
-
-        // Sort the list by "From Hour" in ascending order
+        // Sort the list by "From" time (converted to minutes) in ascending order.
         timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
 
-        // Optionally clear selections after adding
+        // Clear selections for convenience.
         startTime.getSelectionModel().clearSelection();
         endTime.getSelectionModel().clearSelection();
     }
 
-    /**
-     * Checks if the start time is before the end time.
-     */
     private boolean isValidTimeSlot(String from, String to) {
         return convertToMinutes(from) < convertToMinutes(to);
     }
 
-    /**
-     * Converts a time string (e.g., "3:30") to minutes since midnight.
-     */
     private int convertToMinutes(String time) {
         String[] parts = time.split(":");
         int hour = Integer.parseInt(parts[0]);
@@ -135,8 +130,33 @@ public class timeslotController extends Application {
         return hour * 60 + minute;
     }
 
+    private void loadTimeSlotsFromFile() {
+        File file = new File("timeslots.csv");
+        if (!file.exists()) {
+            return;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            // Expect each line to be in the format "from,to".
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    String from = parts[0].trim();
+                    String to = parts[1].trim();
+                    TimeSlot ts = new TimeSlot(from, to);
+                    timeSlotList.add(ts);
+                }
+            }
+            // Sort the list by "From" time.
+            timeSlotList.sort((ts1, ts2) -> Integer.compare(convertToMinutes(ts1.getFrom()), convertToMinutes(ts2.getFrom())));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load time slots: " + ex.getMessage());
+        }
+    }
+
     /**
-     * Saves the list of time slots to the timeslots.csv file.
+     * saves the list of time slots to the "timeslots.csv" file.
      */
     private void saveTimeSlots() {
         if (timeSlotList.isEmpty()) {
@@ -147,8 +167,6 @@ public class timeslotController extends Application {
         try (FileWriter fw = new FileWriter(file, false);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter pw = new PrintWriter(bw)) {
-
-            // Write each time slot to the file
             for (TimeSlot ts : timeSlotList) {
                 pw.println(ts.getFrom() + "-" + ts.getTo());
             }
@@ -159,7 +177,7 @@ public class timeslotController extends Application {
     }
 
     /**
-     * Displays an alert dialog.
+     * shows alert
      */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert alert = new Alert(type);

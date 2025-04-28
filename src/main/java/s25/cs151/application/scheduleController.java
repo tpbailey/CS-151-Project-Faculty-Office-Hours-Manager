@@ -1,7 +1,6 @@
 package s25.cs151.application;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,8 +12,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 
@@ -23,13 +20,11 @@ import java.io.*;
 
 public class scheduleController extends Application{
     private TextField studentFullName;
-    private DatePicker scheduleDatePicker = new DatePicker();
-    private String formattedDate;
+    DatePicker scheduleDatePicker = new DatePicker();
     private ComboBox<String> timeDropdown;
     private ComboBox<String> courseDropdown;
     private TextField reason;
     private TextField comment;
-    private TableView<Schedule> scheduleTable;
 
     @Override
     public void start(Stage stage) throws Exception, FileNotFoundException {
@@ -41,7 +36,7 @@ public class scheduleController extends Application{
         studentFullName = new TextField();
         Label studentFullNameLabel = new Label("Enter student's full name");
         studentFullName.setPromptText("Enter full name");
-        Label scheduleDateLabel = new Label("Select schedule date");
+        Label scheduleDateLabel = new Label("Enter schedule date");
         Label timeSlotLabel = new Label("Select time slot");
         Label courseLabel = new Label("Select course");
         reason = new TextField();
@@ -56,7 +51,8 @@ public class scheduleController extends Application{
 
         scheduleDatePicker.setValue(LocalDate.now());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        formattedDate = scheduleDatePicker.getValue().format(formatter);
+        String formattedDate = scheduleDatePicker.getValue().format(formatter);
+        //System.out.println("Selected Date: " + formattedDate);
 
         timeDropdown = new ComboBox<>();
         // Extract time slots from CSV
@@ -68,7 +64,10 @@ public class scheduleController extends Application{
         } catch (IOException e) {
             System.err.println("Error reading time slots CSV file: " + e.getMessage());
         }
-        timeDropdown.setValue(timeDropdown.getItems().getFirst());
+        if (!timeDropdown.getItems().isEmpty()) {
+            timeDropdown.setValue(timeDropdown.getItems().get(0)); // Use index 0 to get the first item
+        }
+
 
         courseDropdown = new ComboBox<>();
         // Extract course from CSV
@@ -80,7 +79,10 @@ public class scheduleController extends Application{
         } catch (IOException e) {
             System.err.println("Error reading course CSV file: " + e.getMessage());
         }
-        courseDropdown.setValue(courseDropdown.getItems().getFirst());
+        if (!courseDropdown.getItems().isEmpty()) {
+            courseDropdown.setValue(courseDropdown.getItems().get(0)); // Get the first item using index 0
+        }
+
 
         Button submitButton = new Button("Submit");
         submitButton.setOnAction(e -> onSubmitButtonClick());
@@ -116,112 +118,108 @@ public class scheduleController extends Application{
     }
 
     private void onSubmitButtonClick() {
-        if(studentFullName.getText().isEmpty()){
-            showAlert(Alert.AlertType.ERROR, "Student's full name is required.");
+        // Validate fields
+        if (studentFullName.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Student's full name is required.");
+            return;
         }
-        if(scheduleDatePicker.getValue() == null){
-            showAlert(Alert.AlertType.ERROR, "Schedule date is required.");
+        if (scheduleDatePicker.getValue() == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Schedule date is required.");
+            return;
         }
-        if(timeDropdown.getValue() == null || timeDropdown.getValue().toString().isEmpty()){
-            showAlert(Alert.AlertType.ERROR, "Time slot is required.");
+        if (timeDropdown.getValue() == null || timeDropdown.getValue().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Time slot is required.");
+            return;
         }
-        if(courseDropdown.getValue() == null || courseDropdown.getValue().toString().isEmpty()){
-            showAlert(Alert.AlertType.ERROR, "Course is required.");
+        if (courseDropdown.getValue() == null || courseDropdown.getValue().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Course is required.");
+            return;
         }
 
-        String name = studentFullName.getText();
-        String date = scheduleDatePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        String time = timeDropdown.getValue();
-        String course = courseDropdown.getValue();
-        String reas = reason.getText();
-        String comm = comment.getText();
-
-        Schedule schedule = new Schedule(name, date, time, course, reas, comm);
         try {
-            writeScheduleCSV(schedule);
+            // Check for duplicate schedules before saving
+            try (BufferedReader br = new BufferedReader(new FileReader("schedule.csv"))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length == 6 &&
+                            parts[0].equals(studentFullName.getText()) &&
+                            parts[1].equals(scheduleDatePicker.getValue().toString())) {
+                        showAlert(Alert.AlertType.ERROR, "Duplicate Schedule", "This schedule already exists.");
+                        return; // Exit if duplicate found
+                    }
+                }
+            }
 
-            displayScheduleTb();
-        }catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
+            // Create a schedule object
+            Schedule schedule = new Schedule(
+                    studentFullName.getText(),
+                    scheduleDatePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                    timeDropdown.getValue(),
+                    courseDropdown.getValue(),
+                    reason.getText(),
+                    comment.getText()
+            );
+
+            writescheduleCSV(schedule);
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
+
+            // Save the schedule and display the table
+            //displayscheduleTb();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while processing the schedule.");
         }
     }
 
-    private void writeScheduleCSV(Schedule schedule) throws FileNotFoundException {
-        File file = new File("schedule.csv");
-        try (FileWriter fw = new FileWriter(file, true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter pw = new PrintWriter(bw);){
+    private void writescheduleCSV(Schedule schedule) {
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", true)))) {
+            String[] courseParts = schedule.getCourse().split(" ");
+            String courseName = courseParts.length > 0 ? courseParts[0] : "N/A";
+            String code = courseParts.length > 1 ? courseParts[1] : "N/A";
+            String section = courseParts.length > 2 ? courseParts[2] : "N/A";
 
-            pw.println(String.join(",",
-                    schedule.getStudentFullName(),
-                    schedule.getScheduleDate(),
-                    schedule.getTimeSlot(),
-                    schedule.getCourse(),
-                    schedule.getReason().isEmpty() ? "N/A" : schedule.getReason(),
-                    schedule.getComment().isEmpty() ? "N/A" : schedule.getComment()
-            ));
-
-
-//             pw.println(schedule.getStudentFullName() + ", " + schedule.getScheduleDate() + ", " + schedule.getTimeSlot() +
-//                     ", " + schedule.getCourse() + ", " + schedule.getReason() + ", " + schedule.getComment());
-        }catch (Exception ex) {
-            ex.printStackTrace();
+            pw.println(schedule.getStudentFullName() + "," +
+                    schedule.getScheduleDate() + "," +
+                    schedule.getTimeSlot() + "," +
+                    courseName + "," +
+                    code + "," +
+                    section + "," +
+                    schedule.getReason() + "," +
+                    schedule.getComment());
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to save schedule.");
         }
     }
 
-    private void displayScheduleTb() {
-        scheduleTable = createScheduleTableView();
-
-        ObservableList<Schedule> schedules = readScheduleCSV();
-
-        scheduleTable.setItems(readScheduleCSV());
 
 
-        // Configure sorting AFTER setting items
-        TableColumn<Schedule, ?> dateCol = scheduleTable.getColumns().get(1);
-        TableColumn<Schedule, ?> timeCol = scheduleTable.getColumns().get(2);
-        dateCol.setSortType(TableColumn.SortType.ASCENDING);
-        timeCol.setSortType(TableColumn.SortType.ASCENDING);
-        scheduleTable.getSortOrder().setAll(dateCol, timeCol);
-        scheduleTable.sort();
-
-
-        VBox container = new VBox(10, new Label("Schedule"), scheduleTable);
-        container.setPadding(new javafx.geometry.Insets(15));
-        Scene tableScene = new Scene(container, 700, 400);
-
-        Stage tableStage = new Stage();
-        tableStage.setTitle("Schedule Table");
-        tableStage.setScene(tableScene);
-        tableStage.show();
-    }
-
-    private TableView<Schedule> createScheduleTableView() {
+    /*private void displayscheduleTb() {
         TableView<Schedule> table = new TableView<>();
+        ObservableList<Schedule> schedules = FXCollections.observableArrayList();
 
-        TableColumn<Schedule, String> nameCol = new TableColumn<>("Student's name");
+        try (BufferedReader br = new BufferedReader(new FileReader("schedule.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 6) {
+                    schedules.add(new Schedule(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        TableColumn<Schedule, String> nameCol = new TableColumn<>("Student Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("studentFullName"));
 
-        // Schedule Date (convert String to LocalDate for proper sorting)
-        TableColumn<Schedule, LocalDate> dateCol = new TableColumn<>("Schedule date");
-        dateCol.setCellValueFactory(cell ->
-                new SimpleObjectProperty<>(LocalDate.parse(
-                        cell.getValue().getScheduleDate(),
-                        DateTimeFormatter.ofPattern("MM/dd/yyyy")
-                ))
-        );
-        dateCol.setComparator(LocalDate::compareTo);
+        TableColumn<Schedule, String> dateCol = new TableColumn<>("Date");
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
 
-        // Time Slot (convert String to LocalTime for proper sorting)
-        TableColumn<Schedule, LocalTime> timeSlotCol = new TableColumn<>("Time slot");
-        timeSlotCol.setCellValueFactory(cell ->
-                new SimpleObjectProperty<>(LocalTime.parse(
-                        cell.getValue().getTimeSlot().split("-")[0], // Extract start time
-                        DateTimeFormatter.ofPattern("H:mm")
-                ))
-        );
-        timeSlotCol.setComparator(LocalTime::compareTo);
-
+        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time Slot");
+        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
 
         TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
         courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
@@ -232,51 +230,26 @@ public class scheduleController extends Application{
         TableColumn<Schedule, String> commentCol = new TableColumn<>("Comment");
         commentCol.setCellValueFactory(new PropertyValueFactory<>("comment"));
 
-
         table.getColumns().addAll(nameCol, dateCol, timeSlotCol, courseCol, reasonCol, commentCol);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setItems(schedules);
 
-        return table;
-    }
+        VBox container = new VBox(10, new Label("Scheduled Office Hours:"), table);
+        container.setPadding(new Insets(15));
+        Stage tableStage = new Stage();
+        tableStage.setTitle("Schedule Table");
+        tableStage.setScene(new Scene(container, 800, 500)); // Wider for 6 columns
+        tableStage.show();
+    }*/
 
 
 
-    private ObservableList<Schedule> readScheduleCSV() {
-        ObservableList<Schedule> list = FXCollections.observableArrayList();
-        File file = new File("schedule.csv");
-        if (!file.exists()) return list;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-
-                String[] parts = line.split(",", -1);  // Simple split on comma
-
-                if (parts.length >= 8) {
-                    String name = parts[0].trim();
-                    String date = parts[1].trim();
-                    String timeSlot = parts[2].trim();
-                    String courseName = parts[3];
-                    String code = parts[4];
-                    String section = parts[5];
-                    String course = courseName+ " " + code + " " + section;
-                    String reason = parts[6].trim().isEmpty() ? "N/A" : parts[6].trim();
-                    String comment = parts[7].trim().isEmpty() ? "N/A" : parts[7].trim();
-
-                    list.add(new Schedule(name, date, timeSlot, course, reason, comment));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    private void showAlert(Alert.AlertType alertType, String s) {
+    private void showAlert(Alert.AlertType alertType, String header, String content) {
         Alert alert = new Alert(alertType);
-        alert.setTitle("Error");
-        alert.setHeaderText(s);
+        alert.setTitle("Notification");
+        alert.setHeaderText(header); // Add the header argument
+        alert.setContentText(content); // Add the content argument
         alert.showAndWait();
     }
-}
 
+}

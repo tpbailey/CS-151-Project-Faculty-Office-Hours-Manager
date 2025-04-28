@@ -54,5 +54,4 @@ public class Schedule{
     public void setComment(String comment){
         this.comment = comment;
     }
-
 }

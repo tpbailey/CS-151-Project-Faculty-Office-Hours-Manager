@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class OfficeHoursController extends Application {
-    private final OfficeHourDAO dao = new OfficeHourimpDAO();
+    private final OfficeHourDAO dao = new OfficeHourDAO();
 
     private ComboBox<String> semesterDropdown;
     private TextField yearInput;
