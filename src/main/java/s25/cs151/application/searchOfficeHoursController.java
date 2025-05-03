@@ -21,14 +21,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class searchOfficeHoursController extends Application {
+public class searchOfficeHoursController extends Application{
     private ObservableList<Schedule> namesList;
     @FXML
     private TextField studentName;
     @FXML
     private TableView<Schedule> scheduleTable;
 
-    @Override
+
     public void start(Stage stage) throws Exception {
         namesList = readScheduleCSV();
 
@@ -100,7 +100,7 @@ public class searchOfficeHoursController extends Application {
         dateCol.setCellValueFactory(cell ->
                 new SimpleObjectProperty<>(LocalDate.parse(
                         cell.getValue().getScheduleDate(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                        DateTimeFormatter.ofPattern("MM/dd/yyyy")
                 ))
         );
         dateCol.setComparator(LocalDate::compareTo);
