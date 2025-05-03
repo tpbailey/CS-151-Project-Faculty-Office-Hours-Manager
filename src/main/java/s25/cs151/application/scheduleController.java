@@ -18,7 +18,7 @@ import java.time.LocalDate;
 
 import java.io.*;
 
-public class scheduleController extends Application {
+public class scheduleController extends Application{
     private TextField studentFullName;
     DatePicker scheduleDatePicker = new DatePicker();
     private ComboBox<String> timeDropdown;
@@ -110,7 +110,7 @@ public class scheduleController extends Application {
         vb.setSpacing(10);
         vb.setStyle("-fx-alignment: center;" + "-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
 
-        stage.setScene(new Scene(vb, 700, 500));
+        stage.setScene(new Scene(vb, 700,500));
         stage.setTitle("Schedule office hour");
         stage.show();
 
@@ -151,21 +151,14 @@ public class scheduleController extends Application {
                 }
             }
 
+            // Create a schedule object
             Schedule schedule = new Schedule(
                     studentFullName.getText(),
-<<<<<<< HEAD
-                    scheduleDatePicker.getValue().toString(),
-                    timeDropdown.getValue(), // Time Slot from dropdown
-                    courseDropdown.getValue(), // Course from dropdown
-                    reason.getText().isEmpty() ? "N/A" : reason.getText(), // Handle optional reason
-                    comment.getText().isEmpty() ? "N/A" : comment.getText() // Handle optional comment
-=======
                     scheduleDatePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
                     timeDropdown.getValue(),
                     courseDropdown.getValue(),
                     reason.getText(),
                     comment.getText()
->>>>>>> origin/master
             );
 
             writescheduleCSV(schedule);
@@ -211,30 +204,14 @@ public class scheduleController extends Application {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-<<<<<<< HEAD
-                if (parts.length >= 6) { // Ensure all necessary fields exist
-                    schedules.add(new Schedule(
-                            parts[0],                // Student Name
-                            parts[1],                // Schedule Date
-                            parts[2] + " - " + parts[3], // Time Slot (combine From and To)
-                            parts[4],                // Course
-                            parts[5],                // Reason
-                            parts[6]                 // Comment
-                    ));
-                } else {
-                    System.out.println("Skipping line due to insufficient columns: " + line);
-=======
                 if (parts.length == 6) {
                     schedules.add(new Schedule(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
->>>>>>> origin/master
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error reading schedule.csv: " + e.getMessage());
             e.printStackTrace();
         }
 
-        // Define Table Columns
         TableColumn<Schedule, String> nameCol = new TableColumn<>("Student Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("studentFullName"));
 
@@ -256,10 +233,6 @@ public class scheduleController extends Application {
         table.getColumns().addAll(nameCol, dateCol, timeSlotCol, courseCol, reasonCol, commentCol);
         table.setItems(schedules);
 
-        // Set Default Sort Order
-        table.getSortOrder().add(dateCol); // Sort by date
-        table.getSortOrder().add(timeSlotCol); // Sort by time slot
-
         VBox container = new VBox(10, new Label("Scheduled Office Hours:"), table);
         container.setPadding(new Insets(15));
         Stage tableStage = new Stage();
@@ -267,6 +240,7 @@ public class scheduleController extends Application {
         tableStage.setScene(new Scene(container, 800, 500)); // Wider for 6 columns
         tableStage.show();
     }*/
+
 
 
 

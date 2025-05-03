@@ -3,13 +3,10 @@ package s25.cs151.application;
 public class Schedule {
     private String studentFullName;
     private String scheduleDate;
-<<<<<<< HEAD
-    private String timeSlot;
-    private String course;
-=======
+
     private String timeSlot; // <-- ADD THIS
     private String course;   // <-- ADD THIS
->>>>>>> origin/master
+
     private String reason;
     private String comment;
 
@@ -18,8 +15,7 @@ public class Schedule {
         this.scheduleDate = scheduleDate;
         this.timeSlot = timeSlot;
         this.course = course;
-<<<<<<< HEAD
-=======
+
         this.reason = reason;
         this.comment = comment;
     }
@@ -28,20 +24,12 @@ public class Schedule {
         this.scheduleDate = scheduleDate;
         this.timeSlot = "N/A";  // Default if missing
         this.course = "N/A";    // Default if missing
->>>>>>> origin/master
+
         this.reason = reason;
         this.comment = comment;
     }
 
-<<<<<<< HEAD
-    // Getters (ensure all 6 fields have getters)
-    public String getStudentFullName() { return studentFullName; }
-    public String getScheduleDate() { return scheduleDate; }
-    public String getTimeSlot() { return timeSlot; }
-    public String getCourse() { return course; }
-    public String getReason() { return reason; }
-    public String getComment() { return comment; }
-=======
+
     public String getStudentFullName() {
         return studentFullName;
     }
@@ -89,5 +77,5 @@ public class Schedule {
     public void setComment(String comment) {
         this.comment = comment;
     }
->>>>>>> origin/master
+
 }

@@ -7,22 +7,11 @@ import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-<<<<<<< HEAD
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
-=======
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
->>>>>>> origin/master
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -36,100 +25,68 @@ public class searchOfficeHoursController extends Application {
     private ObservableList<Schedule> namesList;
     @FXML
     private TextField studentName;
-<<<<<<< HEAD
-    @FXML TableView<Schedule> scheduleTable;
-
-    private List<Schedule> searchList(String searchWords, List<Schedule> listOfSchedules){
-        List<String> searchWordsArray = Arrays.asList(searchWords.trim().split(" "));
-
-        return listOfSchedules.stream().filter(schedule -> {
-            return searchWordsArray.stream().allMatch((word ->
-                    schedule.getStudentFullName().toLowerCase().contains(word.toLowerCase())));
-        }).collect(Collectors.toList());
-    }
-
-
-    public void start(Stage stage) throws Exception, FileNotFoundException {
-=======
     @FXML
     private TableView<Schedule> scheduleTable;
 
     @Override
     public void start(Stage stage) throws Exception {
->>>>>>> origin/master
         namesList = readScheduleCSV();
 
         Label header = new Label("Search Office Hours Schedule");
         header.setStyle("-fx-font-size: 25px; -fx-font-weight: bold; ");
-<<<<<<< HEAD
-        header.setAlignment(Pos.CENTER);
-=======
         header.setAlignment(javafx.geometry.Pos.CENTER);
->>>>>>> origin/master
 
         studentName = new TextField();
         studentName.setPromptText("Enter name");
-        HBox searchBarContainer = new HBox(studentName);
-<<<<<<< HEAD
-        searchBarContainer.setAlignment(Pos.CENTER);
 
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10, 10, 10, 200));
-=======
+        studentName.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.trim().isEmpty()) {
+                scheduleTable.setItems(namesList);
+                scheduleTable.sort();
+            }
+        });
+
+        HBox searchBarContainer = new HBox(studentName);
         searchBarContainer.setAlignment(javafx.geometry.Pos.CENTER);
->>>>>>> origin/master
 
         Button searchButton = new Button("Search");
         searchButton.setOnAction(e -> onSearchButtonClick());
 
-<<<<<<< HEAD
-        // Initialize scheduleTable
-        scheduleTable = createScheduleTableView();
-        scheduleTable.setItems(namesList); // Populate with initial data
-=======
         Button deleteButton = new Button("Delete Selected");
         deleteButton.setOnAction(e -> onDeleteButtonClick());
 
+        Button editButton = new Button("Edit Selected");
+        editButton.setOnAction(e -> onEditButtonClick());
+
         scheduleTable = createScheduleTableView();
         scheduleTable.setItems(namesList);
->>>>>>> origin/master
 
         // Configure sorting AFTER setting items
         TableColumn<Schedule, ?> dateCol = scheduleTable.getColumns().get(1);
         TableColumn<Schedule, ?> timeCol = scheduleTable.getColumns().get(2);
+
         dateCol.setSortType(TableColumn.SortType.DESCENDING);
         timeCol.setSortType(TableColumn.SortType.DESCENDING);
-        scheduleTable.getSortOrder().setAll(dateCol, timeCol);
+
+        scheduleTable.getSortOrder().setAll(dateCol, timeCol); // first date, then time
         scheduleTable.sort();
 
-<<<<<<< HEAD
-        VBox vb = new VBox(10, header, grid, searchBarContainer, searchButton, scheduleTable);
-        studentName.prefWidthProperty().bind(vb.widthProperty().divide(2));
 
-        // vb.getChildren().add(listView);
+        HBox buttonBox = new HBox(10, deleteButton, editButton);
+        buttonBox.setAlignment(javafx.geometry.Pos.CENTER);
 
-        vb.setSpacing(10);
-        vb.setPadding(new Insets(10, 20, 10, 20));
-        vb.setStyle("-fx-alignment: center;" + "-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
+        VBox vb = new VBox(10, header, searchBarContainer, searchButton, scheduleTable, buttonBox);
 
-        //namesList = readScheduleCSV();
-=======
-        VBox vb = new VBox(10, header, searchBarContainer, searchButton, scheduleTable, deleteButton);
         studentName.prefWidthProperty().bind(vb.widthProperty().divide(2));
         vb.setSpacing(10);
         vb.setPadding(new Insets(10, 20, 10, 20));
         vb.setStyle("-fx-alignment: center;" +
                 "-fx-background-color: radial-gradient(center 50% 50%, radius 60%,  #fceabb, #f8b500);");
->>>>>>> origin/master
 
         Scene scene = new Scene(vb, 800, 500);
         stage.setScene(scene);
         stage.setTitle("Search Office Hours Schedule");
         stage.show();
-<<<<<<< HEAD
-        //so "enter name" appears
-=======
->>>>>>> origin/master
         searchButton.requestFocus();
     }
 
@@ -143,25 +100,13 @@ public class searchOfficeHoursController extends Application {
         dateCol.setCellValueFactory(cell ->
                 new SimpleObjectProperty<>(LocalDate.parse(
                         cell.getValue().getScheduleDate(),
-                        DateTimeFormatter.ofPattern("MM/dd/yyyy")
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
                 ))
         );
         dateCol.setComparator(LocalDate::compareTo);
 
-        TableColumn<Schedule, LocalTime> timeSlotCol = new TableColumn<>("Time slot");
-<<<<<<< HEAD
-        //timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot"));
-
-        timeSlotCol.setCellValueFactory(cell -> new SimpleObjectProperty<>(
-                LocalTime.parse(cell.getValue().getTimeSlot().split("-")[0], DateTimeFormatter.ofPattern("H:mm"))
-        ));
-
-=======
-        timeSlotCol.setCellValueFactory(cell -> new SimpleObjectProperty<>(
-                LocalTime.parse(cell.getValue().getTimeSlot().split("-")[0], DateTimeFormatter.ofPattern("H:mm"))
-        ));
->>>>>>> origin/master
-        timeSlotCol.setComparator(LocalTime::compareTo);
+        TableColumn<Schedule, String> timeSlotCol = new TableColumn<>("Time slot");
+        timeSlotCol.setCellValueFactory(new PropertyValueFactory<>("timeSlot")); // ✨ fixed
 
         TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
         courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
@@ -177,6 +122,7 @@ public class searchOfficeHoursController extends Application {
         return table;
     }
 
+
     private ObservableList<Schedule> readScheduleCSV() {
         namesList = FXCollections.observableArrayList();
         File file = new File("schedule.csv");
@@ -185,29 +131,23 @@ public class searchOfficeHoursController extends Application {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-<<<<<<< HEAD
-
-                String[] parts = line.split(",", -1);  // Simple split on comma
-
-=======
                 String[] parts = line.split(",", -1);
->>>>>>> origin/master
                 if (parts.length >= 8) {
-                    String nameInCSV = parts[0].trim();
+                    String studentName = parts[0].trim();
                     String date = parts[1].trim();
-                    String timeSlot = parts[2].trim();
-                    String courseName = parts[3];
-                    String code = parts[4];
-                    String section = parts[5];
-<<<<<<< HEAD
-                    String course = courseName+ " " + code + " " + section;
-=======
-                    String course = courseName + " " + code + " " + section;
->>>>>>> origin/master
-                    String reason = parts[6].trim().isEmpty() ? "N/A" : parts[6].trim();
-                    String comment = parts[7].trim().isEmpty() ? "N/A" : parts[7].trim();
+                    String startTime = parts[2].trim();
+                    String endTime = parts[3].trim();
+                    String coursePrefix = parts[4].trim();
+                    String courseName = parts[5].trim();
+                    String reason = parts[6].trim();
+                    String comment = parts[7].trim();
 
-                    namesList.add(new Schedule(nameInCSV, date, timeSlot, course, reason, comment));
+                    String timeSlot = startTime + "-" + endTime;
+                    String course = coursePrefix.isEmpty() ? courseName : coursePrefix + " " + courseName;
+                    if (reason.isEmpty()) reason = "N/A";
+                    if (comment.isEmpty()) comment = "N/A";
+
+                    namesList.add(new Schedule(studentName, date, timeSlot, course, reason, comment));
                 }
             }
         } catch (IOException e) {
@@ -216,29 +156,8 @@ public class searchOfficeHoursController extends Application {
         return namesList;
     }
 
-<<<<<<< HEAD
-    private void onSearchButtonClick() {
-        if(studentName.getText().isEmpty()){
-            showAlert(Alert.AlertType.ERROR, "Student's name is required.");
-        }
 
-        // Filter schedules based on search input
-        ObservableList<Schedule> filteredSchedules = FXCollections.observableArrayList(
-                searchList(studentName.getText(), namesList)
-        );
 
-        // Update the TableView with filtered results
-        scheduleTable.setItems(filteredSchedules);
-    }
-
-    private void showAlert(Alert.AlertType alertType, String s) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle("Error");
-        alert.setHeaderText(s);
-        alert.showAndWait();
-    }
-}
-=======
     private List<Schedule> searchList(String searchWords, List<Schedule> listOfSchedules) {
         List<String> searchWordsArray = Arrays.asList(searchWords.trim().split(" "));
         return listOfSchedules.stream().filter(schedule ->
@@ -249,14 +168,18 @@ public class searchOfficeHoursController extends Application {
     }
 
     private void onSearchButtonClick() {
-        if (studentName.getText().isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Student's name is required.");
+        String searchText = studentName.getText().trim();
+        if (searchText.isEmpty()) {
+            scheduleTable.setItems(namesList); // Show all
+            scheduleTable.sort();
             return;
         }
         ObservableList<Schedule> filteredSchedules = FXCollections.observableArrayList(
-                searchList(studentName.getText(), namesList)
+                searchList(searchText, namesList)
         );
         scheduleTable.setItems(filteredSchedules);
+        scheduleTable.sort();
+
     }
 
     private void onDeleteButtonClick() {
@@ -270,21 +193,76 @@ public class searchOfficeHoursController extends Application {
             showAlert(Alert.AlertType.ERROR, "Please select a schedule to delete.");
         }
     }
+    private void onEditButtonClick() {
+        Schedule selected = scheduleTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert(Alert.AlertType.ERROR, "Please select a schedule to edit.");
+            return;
+        }
+
+        Stage editStage = new Stage();
+        editStage.setTitle("Edit Office Hours Schedule");
+
+        TextField nameField = new TextField(selected.getStudentFullName());
+        TextField dateField = new TextField(selected.getScheduleDate());
+        TextField timeSlotField = new TextField(selected.getTimeSlot());
+        TextField courseField = new TextField(selected.getCourse());
+        TextField reasonField = new TextField(selected.getReason());
+        TextField commentField = new TextField(selected.getComment());
+
+        Button saveButton = new Button("Save Changes");
+        saveButton.setOnAction(e -> {
+            selected.setStudentFullName(nameField.getText().trim());
+            selected.setScheduleDate(dateField.getText().trim());
+            selected.setTimeSlot(timeSlotField.getText().trim());
+            selected.setCourse(courseField.getText().trim());
+            selected.setReason(reasonField.getText().trim());
+            selected.setComment(commentField.getText().trim());
+
+            scheduleTable.refresh();
+            saveAllSchedules(namesList);
+            editStage.close();
+        });
+
+        VBox form = new VBox(10, new Label("Student Name:"), nameField,
+                new Label("Date (MM/dd/yyyy):"), dateField,
+                new Label("Time Slot:"), timeSlotField,
+                new Label("Course:"), courseField,
+                new Label("Reason:"), reasonField,
+                new Label("Comment:"), commentField,
+                saveButton);
+        form.setPadding(new Insets(15));
+        Scene scene = new Scene(form, 400, 450);
+        editStage.setScene(scene);
+        editStage.show();
+    }
+
 
     private void saveAllSchedules(ObservableList<Schedule> schedules) {
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", false)))) {
             for (Schedule schedule : schedules) {
+                // split the time slot back to start and end
+                String[] times = schedule.getTimeSlot().split("-", -1);
+                String startTime = times.length > 0 ? times[0].trim() : "";
+                String endTime = times.length > 1 ? times[1].trim() : "";
+
+                // split the course into prefix and name
+                String course = schedule.getCourse();
+                String[] courseParts = course.split(" ", 2);
+                String coursePrefix = courseParts.length > 0 ? courseParts[0].trim() : "";
+                String courseName = courseParts.length > 1 ? courseParts[1].trim() : "";
+
                 pw.println(schedule.getStudentFullName() + "," +
                         schedule.getScheduleDate() + "," +
-                        schedule.getTimeSlot() + "," +
-                        schedule.getCourse() + "," +
-                        schedule.getReason() + "," +
-                        schedule.getComment());
+                        startTime + "," + endTime + "," +
+                        coursePrefix + "," + courseName + "," +
+                        schedule.getReason() + "," + schedule.getComment());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private void showAlert(Alert.AlertType alertType, String s) {
         Alert alert = new Alert(alertType);
@@ -294,4 +272,3 @@ public class searchOfficeHoursController extends Application {
         alert.showAndWait();
     }
 }
->>>>>>> origin/master

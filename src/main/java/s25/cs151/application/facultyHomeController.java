@@ -61,26 +61,16 @@ public class facultyHomeController {
             }
         });
 
-<<<<<<< HEAD
-        btn4.setOnAction(e -> {
-            scheduleController scheduleApp = new scheduleController();
-            try {
-                Stage newStage = new Stage();
-                scheduleApp.start(newStage); // Ensure ScheduleController has start(Stage)
-=======
         btn4.setOnAction(e->{
             scheduleController scheduleApp = new scheduleController();
             try {
                 Stage newStage = new Stage();
                 scheduleApp.start(newStage);
->>>>>>> origin/master
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-<<<<<<< HEAD
-=======
         btn5.setOnAction(e->{
             searchOfficeHoursController searchApp = new searchOfficeHoursController();
             try {
@@ -90,7 +80,6 @@ public class facultyHomeController {
                 ex.printStackTrace();
             }
         });
->>>>>>> origin/master
 
         primaryStage.setScene(new Scene(vb, 700, 500));
         primaryStage.setTitle("Faculty Home");
