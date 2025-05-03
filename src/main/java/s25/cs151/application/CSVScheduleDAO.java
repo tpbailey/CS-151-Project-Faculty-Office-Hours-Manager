@@ -43,10 +43,25 @@ public class CSVScheduleDAO implements ScheduleDAO {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", -1);
-                if (parts.length >= 6) {
-                    schedules.add(new Schedule(
-                            parts[0].trim(), parts[1].trim(), parts[2].trim(),
-                            parts[3].trim(), parts[4].trim(), parts[5].trim()));
+                if (parts.length >= 8) {
+                    String studentName = parts[0].trim();
+                    String date = parts[1].trim();
+                    String startTime = parts[2].trim();
+                    String endTime = parts[3].trim();
+                    String coursePrefix = parts[4].trim();
+                    String courseName = parts[5].trim();
+                    String reason = parts[6].trim();
+                    String comment = parts[7].trim();
+
+                    String timeSlot = startTime + "-" + endTime;
+                    String course = coursePrefix.isEmpty() ? courseName : coursePrefix + " " + courseName;
+
+                    if (reason.isEmpty()) reason = "N/A";
+                    if (comment.isEmpty()) comment = "N/A";
+
+                    schedules.add(new Schedule(studentName, date, timeSlot, course, reason, comment));
+                } else {
+                    System.err.println("Skipping malformed line: " + line);
                 }
             }
         }
