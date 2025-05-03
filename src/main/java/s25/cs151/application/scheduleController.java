@@ -153,18 +153,26 @@ public class scheduleController extends Application {
 
             Schedule schedule = new Schedule(
                     studentFullName.getText(),
+<<<<<<< HEAD
                     scheduleDatePicker.getValue().toString(),
                     timeDropdown.getValue(), // Time Slot from dropdown
                     courseDropdown.getValue(), // Course from dropdown
                     reason.getText().isEmpty() ? "N/A" : reason.getText(), // Handle optional reason
                     comment.getText().isEmpty() ? "N/A" : comment.getText() // Handle optional comment
+=======
+                    scheduleDatePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                    timeDropdown.getValue(),
+                    courseDropdown.getValue(),
+                    reason.getText(),
+                    comment.getText()
+>>>>>>> origin/master
             );
 
             writescheduleCSV(schedule);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
 
             // Save the schedule and display the table
-            displayscheduleTb();
+            //displayscheduleTb();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -174,10 +182,17 @@ public class scheduleController extends Application {
 
     private void writescheduleCSV(Schedule schedule) {
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", true)))) {
+            String[] courseParts = schedule.getCourse().split(" ");
+            String courseName = courseParts.length > 0 ? courseParts[0] : "N/A";
+            String code = courseParts.length > 1 ? courseParts[1] : "N/A";
+            String section = courseParts.length > 2 ? courseParts[2] : "N/A";
+
             pw.println(schedule.getStudentFullName() + "," +
                     schedule.getScheduleDate() + "," +
-                    timeDropdown.getValue() + "," +
-                    courseDropdown.getValue() + "," +
+                    schedule.getTimeSlot() + "," +
+                    courseName + "," +
+                    code + "," +
+                    section + "," +
                     schedule.getReason() + "," +
                     schedule.getComment());
         } catch (IOException e) {
@@ -187,7 +202,8 @@ public class scheduleController extends Application {
     }
 
 
-    private void displayscheduleTb() {
+
+    /*private void displayscheduleTb() {
         TableView<Schedule> table = new TableView<>();
         ObservableList<Schedule> schedules = FXCollections.observableArrayList();
 
@@ -195,6 +211,7 @@ public class scheduleController extends Application {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
+<<<<<<< HEAD
                 if (parts.length >= 6) { // Ensure all necessary fields exist
                     schedules.add(new Schedule(
                             parts[0],                // Student Name
@@ -206,6 +223,10 @@ public class scheduleController extends Application {
                     ));
                 } else {
                     System.out.println("Skipping line due to insufficient columns: " + line);
+=======
+                if (parts.length == 6) {
+                    schedules.add(new Schedule(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
+>>>>>>> origin/master
                 }
             }
         } catch (IOException e) {
@@ -243,9 +264,10 @@ public class scheduleController extends Application {
         container.setPadding(new Insets(15));
         Stage tableStage = new Stage();
         tableStage.setTitle("Schedule Table");
-        tableStage.setScene(new Scene(container, 700, 400));
+        tableStage.setScene(new Scene(container, 800, 500)); // Wider for 6 columns
         tableStage.show();
-    }
+    }*/
+
 
 
     private void showAlert(Alert.AlertType alertType, String header, String content) {

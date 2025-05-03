@@ -22,11 +22,12 @@ public class facultyHomeController {
         HBox hb = new HBox();
         hb.setAlignment(Pos.CENTER);
         hb.setSpacing(20);
-        Button btn1 = new Button("Define semester's office");
+        Button btn1 = new Button("Define Semester's Office Hours");
         Button btn2 = new Button("Time Slot");
         Button btn3 = new Button("Course");
-        Button btn4 = new Button("Office hours schedule");
-        hb.getChildren().addAll(btn1, btn2, btn3, btn4);
+        Button btn4 = new Button("Schedule Office Hours");
+        Button btn5 = new Button("Search Office Hours Schedule");
+        hb.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
         VBox vb = new VBox(header, hb);
         vb.setAlignment(Pos.CENTER);
         vb.setSpacing(20);
@@ -60,16 +61,36 @@ public class facultyHomeController {
             }
         });
 
+<<<<<<< HEAD
         btn4.setOnAction(e -> {
             scheduleController scheduleApp = new scheduleController();
             try {
                 Stage newStage = new Stage();
                 scheduleApp.start(newStage); // Ensure ScheduleController has start(Stage)
+=======
+        btn4.setOnAction(e->{
+            scheduleController scheduleApp = new scheduleController();
+            try {
+                Stage newStage = new Stage();
+                scheduleApp.start(newStage);
+>>>>>>> origin/master
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
+<<<<<<< HEAD
+=======
+        btn5.setOnAction(e->{
+            searchOfficeHoursController searchApp = new searchOfficeHoursController();
+            try {
+                Stage newStage = new Stage();
+                searchApp.start(newStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+>>>>>>> origin/master
 
         primaryStage.setScene(new Scene(vb, 700, 500));
         primaryStage.setTitle("Faculty Home");
