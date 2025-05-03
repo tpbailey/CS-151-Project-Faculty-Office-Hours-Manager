@@ -161,7 +161,10 @@ public class scheduleController extends Application{
                     comment.getText()
             );
 
-            writescheduleCSV(schedule);
+            ScheduleDAO dao = new CSVScheduleDAO();
+            dao.save(schedule);  //uses the polymorphic method
+
+            //writescheduleCSV(schedule);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
 
             // Save the schedule and display the table

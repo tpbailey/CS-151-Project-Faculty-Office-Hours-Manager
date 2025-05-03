@@ -123,8 +123,11 @@ public class searchOfficeHoursController extends Application{
     }
 
 
-    private ObservableList<Schedule> readScheduleCSV() {
-        namesList = FXCollections.observableArrayList();
+    private ObservableList<Schedule> readScheduleCSV() throws IOException {
+        //namesList = FXCollections.observableArrayList();
+        ScheduleDAO dao = new CSVScheduleDAO();
+        namesList = dao.load();
+
         File file = new File("schedule.csv");
         if (!file.exists()) return namesList;
 
@@ -203,10 +206,22 @@ public class searchOfficeHoursController extends Application{
         Stage editStage = new Stage();
         editStage.setTitle("Edit Office Hours Schedule");
 
+        // Split time slot and course for editing
+        String[] timeParts = selected.getTimeSlot().split("-", 2);
+        String startTime = timeParts.length > 0 ? timeParts[0].trim() : "";
+        String endTime = timeParts.length > 1 ? timeParts[1].trim() : "";
+
+        String[] courseParts = selected.getCourse().split(" ", 2);
+        String coursePrefix = courseParts.length > 0 ? courseParts[0].trim() : "";
+        String courseName = courseParts.length > 1 ? courseParts[1].trim() : "";
+
+        // Fields
         TextField nameField = new TextField(selected.getStudentFullName());
         TextField dateField = new TextField(selected.getScheduleDate());
-        TextField timeSlotField = new TextField(selected.getTimeSlot());
-        TextField courseField = new TextField(selected.getCourse());
+        TextField startTimeField = new TextField(startTime);
+        TextField endTimeField = new TextField(endTime);
+        TextField coursePrefixField = new TextField(coursePrefix);
+        TextField courseNameField = new TextField(courseName);
         TextField reasonField = new TextField(selected.getReason());
         TextField commentField = new TextField(selected.getComment());
 
@@ -214,28 +229,43 @@ public class searchOfficeHoursController extends Application{
         saveButton.setOnAction(e -> {
             selected.setStudentFullName(nameField.getText().trim());
             selected.setScheduleDate(dateField.getText().trim());
-            selected.setTimeSlot(timeSlotField.getText().trim());
-            selected.setCourse(courseField.getText().trim());
+            selected.setTimeSlot(startTimeField.getText().trim() + "-" + endTimeField.getText().trim());
+            selected.setCourse(coursePrefixField.getText().trim() + " " + courseNameField.getText().trim());
             selected.setReason(reasonField.getText().trim());
             selected.setComment(commentField.getText().trim());
 
             scheduleTable.refresh();
-            saveAllSchedules(namesList);
+
+            ScheduleDAO dao = new CSVScheduleDAO();
+            try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", false)))) {
+                for (Schedule s : namesList) {
+                    dao.save(s);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error saving changes.");
+            }
+
             editStage.close();
         });
 
-        VBox form = new VBox(10, new Label("Student Name:"), nameField,
+        VBox form = new VBox(10,
+                new Label("Student Name:"), nameField,
                 new Label("Date (MM/dd/yyyy):"), dateField,
-                new Label("Time Slot:"), timeSlotField,
-                new Label("Course:"), courseField,
+                new Label("Start Time:"), startTimeField,
+                new Label("End Time:"), endTimeField,
+                new Label("Course Prefix:"), coursePrefixField,
+                new Label("Course Name:"), courseNameField,
                 new Label("Reason:"), reasonField,
                 new Label("Comment:"), commentField,
                 saveButton);
+
         form.setPadding(new Insets(15));
-        Scene scene = new Scene(form, 400, 450);
+        Scene scene = new Scene(form, 400, 500);
         editStage.setScene(scene);
         editStage.show();
     }
+
 
 
     private void saveAllSchedules(ObservableList<Schedule> schedules) {
