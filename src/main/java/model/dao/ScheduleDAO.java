@@ -1,6 +1,8 @@
-package s25.cs151.application;
+package model.dao;
 
 import javafx.collections.ObservableList;
+import model.Schedule;
+
 import java.io.IOException;
 
 public interface ScheduleDAO {

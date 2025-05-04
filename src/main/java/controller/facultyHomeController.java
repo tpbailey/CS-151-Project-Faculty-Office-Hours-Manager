@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import s25.cs151.application.searchOfficeHoursController;
 
 public class facultyHomeController {
     public void display(Stage primaryStage) throws IOException {

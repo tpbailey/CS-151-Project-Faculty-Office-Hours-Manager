@@ -14,6 +14,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.Schedule;
+import model.dao.CSVScheduleDAO;
+import model.dao.ScheduleDAO;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

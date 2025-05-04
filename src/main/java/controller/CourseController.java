@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.Course;
-import s25.cs151.application.CourseDAO;
+import model.dao.CourseDAO;
 
 public class CourseController extends Application {
     private TextField courseCodeField;

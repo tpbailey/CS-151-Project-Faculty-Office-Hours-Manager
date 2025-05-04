@@ -5,4 +5,5 @@ module s25.cs151.application {
     exports s25.cs151.application;
     exports controller;
     exports model;
+    exports model.dao;
 }

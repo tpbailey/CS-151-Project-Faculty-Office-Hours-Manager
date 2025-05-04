@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.OfficeHour;
-import s25.cs151.application.OfficeHourDAO;
+import model.dao.OfficeHourDAO;
 
 public class OfficeHoursController extends Application {
     private final OfficeHourDAO dao = new OfficeHourDAO();

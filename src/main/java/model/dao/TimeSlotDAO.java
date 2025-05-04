@@ -1,4 +1,4 @@
-package s25.cs151.application;
+package model.dao;
 
 import model.TimeSlot;
 

@@ -1,4 +1,4 @@
-package s25.cs151.application;
+package model.dao;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
