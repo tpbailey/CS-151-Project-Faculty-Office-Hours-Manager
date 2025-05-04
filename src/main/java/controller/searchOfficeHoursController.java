@@ -1,4 +1,4 @@
-package s25.cs151.application;
+package controller;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.Schedule;
 
 import java.io.*;
 import java.util.Arrays;

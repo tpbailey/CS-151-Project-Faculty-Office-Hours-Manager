@@ -1,8 +1,7 @@
-package s25.cs151.application;
+package controller;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,6 +9,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.OfficeHour;
+import s25.cs151.application.OfficeHourDAO;
 
 public class OfficeHoursController extends Application {
     private final OfficeHourDAO dao = new OfficeHourDAO();

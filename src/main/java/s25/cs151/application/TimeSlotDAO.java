@@ -1,5 +1,7 @@
 package s25.cs151.application;
 
+import model.TimeSlot;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;

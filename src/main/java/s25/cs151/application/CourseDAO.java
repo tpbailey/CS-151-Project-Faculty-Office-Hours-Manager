@@ -2,6 +2,7 @@ package s25.cs151.application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.Course;
 
 import java.io.*;
 

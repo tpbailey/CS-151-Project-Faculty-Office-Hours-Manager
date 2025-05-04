@@ -1,5 +1,7 @@
 package s25.cs151.application;
 
+import model.OfficeHour;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

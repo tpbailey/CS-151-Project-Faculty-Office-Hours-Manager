@@ -2,9 +2,9 @@ package s25.cs151.application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.Schedule;
 
 import java.io.*;
-import java.util.List;
 
 public class ScheduleDAO {
 
