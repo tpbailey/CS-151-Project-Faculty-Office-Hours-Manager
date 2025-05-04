@@ -3,7 +3,7 @@ Version: 0.8
 Who did what:
 1.Thel Nu Zaw - created editing feature to edit the selected office hour and save the info to csv
 2.Tanequa Bailey - populated product with 10 “Office Hours Schedule” for at least 4 different students;
-organized classes into MVC; did ReadMe.tx
+organized classes into MVC; did ReadMe.txt
 3.Sanya Mandhyan - implemented polymorphism
 4.Natalie Tran - fixed reason and comment column issues; cleaned project folder and zipped
 Any other instruction that users need to know:
