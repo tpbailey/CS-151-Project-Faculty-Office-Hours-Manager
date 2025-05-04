@@ -14,7 +14,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
@@ -115,9 +117,47 @@ public class searchOfficeHoursController extends Application {
     }
 
     private ObservableList<Schedule> readScheduleCSV() throws IOException {
-        ScheduleDAO dao = new CSVScheduleDAO();
-        return dao.load(); // ✅ No duplication
+        ObservableList<Schedule> schedules = FXCollections.observableArrayList();
+        Path path = Paths.get("schedule.csv");
+        if (!Files.exists(path)) return schedules;
+
+        try (BufferedReader br = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // split on every comma, keep empty tokens
+                String[] toks = line.split(",", -1);
+                if (toks.length < 6) continue;   // at minimum: name,date,start,end,reason,comment
+
+                String student = toks[0].trim();
+                String date    = toks[1].trim();
+                String start   = toks[2].trim();
+                String end     = toks[3].trim();
+
+                // last two tokens are reason & comment
+                String reason  = toks[toks.length - 2].trim();
+                String comment = toks[toks.length - 1].trim();
+
+                // everything in between [4 .. length-3] is the course field, re-joined with commas
+                String course =
+                        java.util.stream.IntStream.range(4, toks.length - 2)
+                                .mapToObj(i -> toks[i].trim())
+                                .collect(Collectors.joining(", "));
+
+                // now build your Schedule exactly as before
+                schedules.add(new Schedule(
+                        student,
+                        date,
+                        start + "-" + end,
+                        course,
+                        reason,
+                        comment
+                ));
+            }
+        }
+
+        return schedules;
     }
+
 
     private List<Schedule> searchList(String searchWords, List<Schedule> listOfSchedules) {
         List<String> searchWordsArray = Arrays.asList(searchWords.trim().split(" "));
