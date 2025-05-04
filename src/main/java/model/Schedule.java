@@ -3,8 +3,10 @@ package model;
 public class Schedule {
     private String studentFullName;
     private String scheduleDate;
+
     private String timeSlot; // <-- ADD THIS
     private String course;   // <-- ADD THIS
+
     private String reason;
     private String comment;
 
@@ -13,6 +15,7 @@ public class Schedule {
         this.scheduleDate = scheduleDate;
         this.timeSlot = timeSlot;
         this.course = course;
+
         this.reason = reason;
         this.comment = comment;
     }
@@ -21,9 +24,11 @@ public class Schedule {
         this.scheduleDate = scheduleDate;
         this.timeSlot = "N/A";  // Default if missing
         this.course = "N/A";    // Default if missing
+
         this.reason = reason;
         this.comment = comment;
     }
+
 
     public String getStudentFullName() {
         return studentFullName;
@@ -72,4 +77,5 @@ public class Schedule {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
 }
