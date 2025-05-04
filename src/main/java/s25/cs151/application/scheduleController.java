@@ -161,6 +161,9 @@ public class scheduleController extends Application{
                     comment.getText()
             );
 
+            //ScheduleDAO dao = new CSVScheduleDAO();
+            //dao.save(schedule);  //uses the polymorphic method
+
             writescheduleCSV(schedule);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Schedule saved successfully!");
 
@@ -175,24 +178,29 @@ public class scheduleController extends Application{
 
     private void writescheduleCSV(Schedule schedule) {
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("schedule.csv", true)))) {
-            String[] courseParts = schedule.getCourse().split(" ");
-            String courseName = courseParts.length > 0 ? courseParts[0] : "N/A";
-            String code = courseParts.length > 1 ? courseParts[1] : "N/A";
-            String section = courseParts.length > 2 ? courseParts[2] : "N/A";
+            // split the three-part course string on commas (and trim all parts)
+            String[] courseParts = schedule.getCourse().split("\\s*,\\s*");
+            String prefix     = courseParts.length > 0 ? courseParts[0] : "";
+            String courseName = courseParts.length > 1 ? courseParts[1] : "";
+            String section    = courseParts.length > 2 ? courseParts[2] : "";
 
-            pw.println(schedule.getStudentFullName() + "," +
-                    schedule.getScheduleDate() + "," +
-                    schedule.getTimeSlot() + "," +
-                    courseName + "," +
-                    code + "," +
-                    section + "," +
-                    schedule.getReason() + "," +
-                    schedule.getComment());
+            // now write exactly 8 columns: student, date, start-end, prefix, name, section, reason, comment
+            pw.printf("%s,%s,%s,%s,%s,%s,%s,%s%n",
+                    schedule.getStudentFullName(),
+                    schedule.getScheduleDate(),
+                    schedule.getTimeSlot(),
+                    prefix,
+                    courseName,
+                    section,
+                    schedule.getReason(),
+                    schedule.getComment()
+            );
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to save schedule.");
         }
     }
+
 
 
 
